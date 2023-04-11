@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Funicorn Logger</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script src="../echarts/echarts.min.js"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<style>
+    .layui-fluid {padding:0 0 !important;}
+    .head-row{padding-top: 20px;padding-left: 20px;padding-right: 20px;margin: auto !important}
+    .head-left-row {font-size: 30px;height: 100px;text-align: center;color: white;line-height: 100px}
+    .head-right-row {font-size: 15px;height: 100px;text-align: center;color: white;line-height: 100px}
+    .home-body {background-color: #ECF0F5}
+    .body-row {margin-left: 35px;margin-right: 35px;padding-top: 30px;padding-left: 30px;background-color: white}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-header" th:replace="header.html"></div>
+    <div class="home-body">
+        <div class="layui-row layui-col-space30 head-row">
+            <div class="layui-col-md4">
+                <a style="cursor: pointer" href="/app">
+                    <div class="layui-row" style="background-color: #00C0EF;height: 100px">
+                        <div class="layui-col-md5 head-left-row" style="background-color: #009ABF" th:text="${homeData.appNum}"></div>
+                        <div class="layui-col-md7 head-right-row">
+                            客户端数目
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="layui-col-md4">
+                <a style="cursor: pointer" href="/log">
+                    <div class="layui-row" style="background-color: #5FB878;height: 100px">
+                        <div class="layui-col-md5 head-left-row" style="background-color: #009f95" th:text="${homeData.logNum}"></div>
+                        <div class="layui-col-md7 head-right-row">
+                            今日日志收集数量
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-row" style="background-color: #F39C12;height: 100px">
+                    <div class="layui-col-md5 head-left-row" style="background-color: #C27D0E" th:text="${homeData.userNum}"></div>
+                    <div class="layui-col-md7 head-right-row">
+                        今日产生日志的用户数量
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr style="border-bottom:3px solid white!important;"/>
+        <div class="layui-row body-row">
+            <div class="layui-col-md5">
+                <div id="pieLogType" style="width: 100%;height:400px;"></div>
+            </div>
+            <div class="layui-col-md5 layui-col-md-offset2">
+                <div id="appLogNumChart" style="width: 100%;height:400px;"></div>
+            </div>
+        </div>
+        <hr style="border-bottom:3px solid white!important;"/>
+        <div class="layui-row" style="margin-left: 35px;margin-right: 35px;padding: 30px;background-color: white">
+            <div class="layui-col-md5">
+                <div id="interfaceTop" style="width: 100%;height:400px;"></div>
+            </div>
+            <div class="layui-col-md5 layui-col-md-offset2">
+                <div id="userTop" style="width: 100%;height:400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript">
+    layui.use(['jquery'], function () {
+        const $ = layui.jquery;
+        //饼图
+        let pieChart = echarts.init(document.getElementById('pieLogType'));
+        let pieData = [
+            { value: 0, name: 'INSERT' },
+            { value: 0, name: 'UPDATE' },
+            { value: 0, name: 'DELETE' },
+            { value: 0, name: 'SELECT' },
+            { value: 0, name: 'LOGIN' },
+            { value: 0, name: 'LOGOUT' }
+        ];
+        let pieOption = {
+            title: {
+                text: '今日日志类型比例图',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            series: [
+                {
+                    type: 'pie',
+                    radius: '50%',
+                    data: pieData,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        pieChart.setOption(pieOption);
+        $.ajax({
+            url:'/sysLog/groupByOperateType',
+            method:'get',
+            dataType:'JSON',
+            success: function (data) {
+                if (data.code===200 && data.data) {
+                    pieData = []
+                    $.each(data.data,function (index,value) {
+                        pieData.push({value:value,name:index})
+                    });
+                    pieOption = {
+                        title: {
+                            text: '今日日志类型比例图',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left'
+                        },
+                        series: [
+                            {
+                                type: 'pie',
+                                radius: '50%',
+                                data: pieData,
+                                emphasis: {
+                                    itemStyle: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    pieChart.setOption(pieOption);
+                }
+            }
+        });
+
+        //客户端比例图
+        let appLogNumChart =  echarts.init(document.getElementById('appLogNumChart'));
+        let appLogNumChartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            title: {
+                text: '今日日志客户端比例图',
+                left: 'center'
+            },
+            xAxis: {
+                type: 'category',
+                data: ['未连接客户端']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    data: [0],
+                    type: 'bar'
+                }
+            ]
+        };
+        appLogNumChart.setOption(appLogNumChartOption);
+        $.ajax({
+            url: '/sysLog/groupByAppName',
+            method: 'get',
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.code===200 && data.data) {
+                    let xAxisData = [];
+                    let seriesData = [];
+                    $.each(data.data,function (index,value) {
+                        xAxisData.push(index);
+                        seriesData.push(value);
+                    });
+                    let appLogNumChartOption = {
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        },
+                        title: {
+                            text: '今日日志客户端比例图',
+                            left: 'center'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: xAxisData
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [
+                            {
+                                data: seriesData,
+                                type: 'bar'
+                            }
+                        ]
+                    };
+                    appLogNumChart.setOption(appLogNumChartOption);
+                }
+            }
+        });
+
+        //请求接口TOP5
+        let inTopChart = echarts.init(document.getElementById('interfaceTop'));
+        // 指定图表的配置项和数据
+        let inTopOption = {
+            title: {
+                text: '今日接口调用TOP5',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: function (params) {
+                    return params[0].name + ': ' + params[0].value + '次';
+                }
+            },
+            legend: {},
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'value',
+                boundaryGap: [0, 0.01]
+            },
+            yAxis: {
+                type: 'category',
+                data: ['TOP5', 'TOP4', 'TOP3', 'TOP2', 'TOP1']
+            },
+            series: [
+                {
+                    type: 'bar',
+                    data: [0, 0, 0, 0, 0],
+                    itemStyle: {
+                        //通常情况下：
+                        normal: {
+                            //每个柱子的颜色即为colorList数组里的每一项，如果柱子数目多于colorList的长度，则柱子颜色循环使用该数组
+                            color: function (params) {
+                                let colorList = [
+                                    "#3BA272",
+                                    "#4B6FB8",
+                                    "#FAC858",
+                                    "#C27D0E",
+                                    "#F25022"
+                                ];
+                                return colorList[params.dataIndex];
+                            }
+                        }
+                    }
+                }
+            ]
+        };
+        inTopChart.setOption(inTopOption);
+        $.ajax({
+            url: '/sysLog/requestUrlTop5',
+            method: 'get',
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.code===200 && data.data) {
+                    let seriesData = [0, 0, 0, 0, 0];
+                    for (let i = 0; i < data.data.length; i++) {
+                        seriesData[4-i] ={value:data.data[i].requestNum, label:data.data[i].requestUrl, appName:data.data[i].appName};
+                    }
+                    inTopOption = {
+                        title: {
+                            text: '今日接口调用TOP5',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            },
+                            formatter: function (params) {
+                                if (params[0].data.appName) {
+                                    return params[0].data.appName + ' <br/><br/>' + params[0].data.label + ': ' + params[0].value + '次';
+                                } else {
+                                    return params[0].name + ': ' + params[0].value + '次';
+                                }
+                            }
+                        },
+                        legend: {},
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'value',
+                            boundaryGap: [0, 0.01]
+                        },
+                        yAxis: {
+                            type: 'category',
+                            data: ['TOP5', 'TOP4', 'TOP3', 'TOP2', 'TOP1']
+                        },
+                        series: [
+                            {
+                                type: 'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            let colorList = [
+                                                "#3BA272",
+                                                "#4B6FB8",
+                                                "#FAC858",
+                                                "#C27D0E",
+                                                "#F25022"
+                                            ];
+                                            return colorList[params.dataIndex];
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    inTopChart.setOption(inTopOption);
+                }
+            }
+        });
+
+        //活跃用户TOP5
+        let userTopChart = echarts.init(document.getElementById('userTop'));
+        let userTopOption = {
+            title: {
+                text: '今日活跃用户TOP5',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: function (params) {
+                    return params[0].name + ': ' + params[0].value + '次';
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                inverse:true,
+                type: 'value',
+                boundaryGap: [0, 0.01]
+            },
+            yAxis: {
+                type: 'category',
+                data: ['TOP5', 'TOP4', 'TOP3', 'TOP2', 'TOP1']
+            },
+            series: [
+                {
+                    type: 'bar',
+                    data: [0, 0, 0, 0, 0],
+                    itemStyle: {
+                        normal: {
+                            color: function (params) {
+                                let colorList = [
+                                    "#3BA272",
+                                    "#4B6FB8",
+                                    "#FAC858",
+                                    "#C27D0E",
+                                    "#F25022"
+                                ];
+                                return colorList[params.dataIndex];
+                            }
+                        }
+                    }
+                }
+            ]
+        };
+        userTopChart.setOption(userTopOption);
+        $.ajax({
+            url: '/sysLog/requestUserTop5',
+            method: 'get',
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.code===200 && data.data) {
+                    let seriesData = [0, 0, 0, 0, 0];
+                    for (let i = 0; i < data.data.length; i++) {
+                        seriesData[4-i] ={value:data.data[i].requestNum, label:data.data[i].username};
+                    }
+                    userTopOption = {
+                        title: {
+                            text: '今日接口调用TOP5',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            },
+                            formatter: function (params) {
+                                if (params[0].data.label) {
+                                    return params[0].data.label + ': ' + params[0].value + '次';
+                                } else {
+                                    return params[0].name + ': ' + params[0].value + '次';
+                                }
+                            }
+                        },
+                        legend: {},
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'value',
+                            boundaryGap: [0, 0.01]
+                        },
+                        yAxis: {
+                            type: 'category',
+                            data: ['TOP5', 'TOP4', 'TOP3', 'TOP2', 'TOP1']
+                        },
+                        series: [
+                            {
+                                type: 'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            let colorList = [
+                                                "#3BA272",
+                                                "#4B6FB8",
+                                                "#FAC858",
+                                                "#C27D0E",
+                                                "#F25022"
+                                            ];
+                                            return colorList[params.dataIndex];
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    userTopChart.setOption(userTopOption);
+                }
+            }
+        });
+    });
+
+</script>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Funicorn Logger</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script src="../layui/layui.js"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+<div class="layui-header">
+    <ul class="layui-nav" style="padding: 0 !important;" lay-filter="nav">
+        <li class="layui-nav-item">
+            <a href="/home"><b style="font-size: 20px; color: #5FB878">Funicorn Logger</b></a>
+        </li>
+        <li class="layui-nav-item" style="border: 1px solid;height: 20px"></li>
+        <li class="layui-nav-item" id="/log">
+            <a href="/log">操作日志</a>
+        </li>
+        <li class="layui-nav-item" id="/app">
+            <a href="/app">客户端管理</a>
+        </li>
+        <li class="layui-nav-item" id="/user" style="display: none">
+            <a href="/user">用户管理</a>
+        </li>
+        <li class="layui-nav-item" style=" position: absolute !important;top: 0;right: 30px">
+            <a href="javascript:"><img src="../images/defaultHeader.png" class="layui-nav-img"><span id="username"></span></a>
+            <dl class="layui-nav-child">
+                <dd id="editPwd"><a href="javascript:">修改密码</a></dd>
+                <dd><a href="/logout">退出</a></dd>
+            </dl>
+        </li>
+    </ul>
+</div>
+
+<div style="display: none" class="layui-fluid" id="editPwdBox">
+    <div style="padding: 20px">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline" style="display: none">
+                    <label class="layui-form-label">用户id</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="userId" name="userId" required autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="width: auto">密码</label>
+                    <div class="layui-input-inline" style="width: 270px">
+                        <input type="text" id="password" name="password" placeholder="请输入密码" lay-verify="password" required autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button lay-submit lay-filter="editPwdBtn" class="layui-btn">确定</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+
+<script>
+    layui.use(['layer', 'form', 'jquery','element'], function(){
+        const $ = layui.jquery;
+        const form = layui.form;
+        const element = layui.element;
+        let userInfo = layui.sessionData("userInfo");
+
+        // 是否隐藏用户管理
+        if (userInfo.user.userType==='Admin') {
+            document.getElementById("/user").style.display = 'inline-block'
+        } else {
+            document.getElementById("/user").style.display = 'none'
+        }
+        document.getElementById('username').innerHTML = userInfo.user.nickname
+
+        //修改触发导航样式 方案很low 奈何我是个前端小白
+        let href = window.location.href;
+        href = href.replace("http://","").replace("https://","").split("/")[1];
+        if (href && href !== "home" && href !== "/") {
+            document.getElementById('/' + href).classList.add("layui-this")
+        }
+
+        $('#editPwd').on('click',function (data){
+            layer.open({
+                type: 1,
+                content: $('#editPwdBox'),
+                area: ["500px", "200px"],
+                title: ['修改密码'],
+                fixed: false,
+                shadeClose: true,
+                success: function () {
+                    $('#userId').val(userInfo.user.id);
+                },
+                cancel: function () {
+                    $('#userId').val(null);
+                },
+            })
+        });
+
+        //监听修改密码事件
+        form.on('submit(editPwdBtn)',function (data) {
+            $.ajax({
+                url:'/user/editPwd',
+                method: 'post',
+                data:  JSON.stringify(data.field),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'JSON',
+                success: function (res) {
+                    //关闭弹出层
+                    layer.close(layer.index);
+                    if (res.code===200) {
+                        $('#userId').val(null);
+                        $('#password').val(null);
+                        layer.msg('密码修改成功')
+                    } else {
+                        layer.msg(res.message)
+                    }
+                },
+                error: function (res) {
+                    layer.msg('服务器异常')
+                }
+            })
+            return false;
+        });
+    });
+</script>
+</html>

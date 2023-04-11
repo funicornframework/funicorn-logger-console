@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Funicorn Logger</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<style>
+    .layui-fluid {padding:0 0 !important;}
+    .layui-table-page {text-align: right !important;}
+    .more-condition{margin-left: 20px;color: #009688;cursor: pointer}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-header" th:replace="header.html"></div>
+    <div class="layui-row" style="padding-top: 20px">
+        <form class="layui-form" id="searchForm" method="get">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">客户端标识</label>
+                    <div class="layui-input-inline">
+                        <select name="appName" id="appNameSelect" lay-search="">
+                            <option value="">请选择客户端标识</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">操作人</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="username" name="username" placeholder="操作人" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">租户ID</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="tenantId" name="tenantId" placeholder="租户ID" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">请求时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="rangeTime" name="rangeTime" class="layui-input" placeholder="请选择时间范围">
+                    </div>
+                </div>
+                <div class="layui-inline" style="margin-left: 27px">
+                    <div class="layui-input-inline">
+                        <button id="submitSearch" lay-submit lay-filter="search" class="layui-btn">查询</button>
+                        <a id="moreCondition" href="javascript:" class="more-condition">高级搜索
+                            <i id="moreIcon" class="layui-icon layui-icon-down layui-nav-more" style="font-size: 13px"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" style="display: none" id="moreConditionForm">
+                <div class="layui-inline">
+                    <label class="layui-form-label">操作类型</label>
+                    <div class="layui-input-inline">
+                        <select name="operationType" id="operationType" lay-search="">
+                            <option value="">请选择操作类型</option>
+                            <option value="UPDATE">UPDATE</option>
+                            <option value="SELECT">SELECT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="INSERT">INSERT</option>
+                            <option value="LOGIN">LOGIN</option>
+                            <option value="LOGOUT">LOGOUT</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">请求类型</label>
+                    <div class="layui-input-inline">
+                        <select name="requestMethod" id="requestMethod" lay-search="">
+                            <option value="">请选请求类型</option>
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PUT">PUT</option>
+                            <option value="PATCH">PATCH</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">请求路径</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="requestUrl" name="requestUrl" placeholder="请求路径" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">函数路径</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="functionPath" name="functionPath" placeholder="函数路径" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="layui-row" style="padding-left: 20px;padding-right: 20px">
+        <table id="logdata" lay-filter="log">
+            <script type="text/html" id="logInfoBar">
+                <a class="layui-btn layui-btn-xs" lay-event="info">详情</a>
+            </script>
+        </table>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript"  th:inline="none">
+    layui.use(['form','table','laydate','jquery','layer'], function () {
+        const table = layui.table;
+        const $ = layui.jquery;
+        const layer = layui.layer;
+        const form = layui.form;
+        const laydate = layui.laydate;
+        // 动态渲染表格
+        const initTable =table.render({
+            elem: '#logdata'
+            , height: 480
+            , url: '/sysLog/page' //数据接口
+            , method: 'get'
+            , request: {
+                pageName: 'current' //页码的参数名称，默认：page
+                ,limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            , response: {
+                statusName: 'code' //规定数据状态的字段名称，默认：code
+                , statusCode: 200 //规定成功的状态码，默认：0
+                , msgName: 'message' //规定状态信息的字段名称，默认：msg
+                , countName: 'count' //规定数据总数的字段名称，默认：count
+                , dataName: 'data' //规定数据列表的字段名称，默认：data
+            }
+            , page: true //开启分页
+            , limits: [10, 20, 50, 100]
+            , limit: 10
+            , cols: [[
+                {field: 'appName', title: '客户端标识', width: 200}
+                , {field: 'content', title: '请求名称', width: 250}
+                , {field: 'requestUrl', title: '请求路径', width: 200}
+                , {field: 'operationType', title: '类型', width: 100}
+                , {field: 'username', title: '操作人', width: 130}
+                , {field: 'operationTime', title: '请求时间', width: 170, sort: true}
+                , {field: 'costTime', title: '响应耗时(ms)', width: 120}
+                , {field: 'tenantId', title: '租户ID'}
+                , {fixed: 'right', title: '操作', toolbar: '#logInfoBar', width: 150 }
+            ]]
+        });
+
+        //触发行单击事件
+        table.on('tool(log)', function (obj) {
+            if (obj.event === 'info') {
+                layer.open({
+                    type: 2,
+                    content: ["/sysLog/logInfo?id=" + obj.data.id],   //添加页，后台controller转发到指定页
+                    area: ["70%", "70%"],
+                    title: ['日志详情'],
+                    fixed: false,
+                    shadeClose: true,
+                    skin: 'layui-row'
+                })
+            }
+        });
+
+        //select下拉选择框动态赋值
+        $.ajax({
+            url:'/appInfo/list',
+            method:'get',
+            dataType:'JSON',
+            success: function (data) {
+                $.each(data.data,function (index,value) {
+                    $('#appNameSelect').append(new Option(value.appName,value.appName))
+                });
+                form.render('select')
+            }
+        })
+
+        // 日期时间选择器
+        laydate.render({
+            elem: '#rangeTime' //指定元素
+            ,range: true
+        });
+
+        //监听查询事件
+        form.on('submit(search)',function (data) {
+            let startTime;
+            let endTime;
+            if (data && data.field && data.field.rangeTime) {
+                let rangeTime = data.field.rangeTime.split(' - ')
+                startTime = rangeTime[0] + ' 00:00:00'
+                endTime = rangeTime[1] + ' 23:59:59'
+            }
+            initTable.reload({
+                where: {
+                    appName: data.field.appName,
+                    tenantId: data.field.tenantId,
+                    username: data.field.username,
+                    startTime: startTime,
+                    endTime: endTime,
+                    functionPath: data.field.functionPath,
+                    operationType: data.field.operationType,
+                    requestMethod: data.field.requestMethod,
+                    requestUrl: data.field.requestUrl
+                }})
+            return false;
+        });
+
+        //高级搜索点击事件
+        $('#moreCondition').on('click',function (data){
+            //修改高级搜索样式
+            let moreIcon = document.getElementById("moreIcon");
+            let classList =moreIcon.classList;
+            if ($.inArray('layui-icon-down',classList)>=0) {
+                classList.remove('layui-icon-down');
+                classList.add('layui-icon-up');
+            } else if ($.inArray('layui-icon-up',classList)>=0) {
+                classList.remove('layui-icon-up');
+                classList.add('layui-icon-down');
+            }
+            if (document.getElementById("moreConditionForm").style.display==='none') {
+                document.getElementById("moreConditionForm").style.display = 'block'
+            } else {
+                document.getElementById("moreConditionForm").style.display = 'none'
+            }
+        })
+    });
+</script>
+</html>

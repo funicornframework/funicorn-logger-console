@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Funicorn Logger</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script src="../layui/layui.js"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<style>
+    .head-td-one{background-color: #d9d9d9;width: 30%}
+    .head-td-two{background-color: #d9d9d9;width: 30%}
+    .head-td-three{background-color: #d9d9d9;width: 20%;}
+    .head-td-four{background-color: #d9d9d9;width: 20%;min-width: 140px}
+</style>
+<body>
+<div class="layui-fluid">
+    <table class="layui-table">
+        <tbody>
+        <tr>
+            <td class="head-td-one">客户端标识</td>
+            <td class="head-td-two">节点IP</td>
+            <td class="head-td-three" style="text-align: center">节点状态</td>
+            <td class="head-td-four">最后心跳时间</td>
+        </tr>
+        <tr th:each="node:${nodes}">
+            <td th:text="${node.appName}"></td>
+            <td th:text="${node.ip}"></td>
+            <td th:if="${node.online eq 1}" style="color: #67C23A;text-align: center">心跳正常</td>
+            <td th:if="${node.online eq 0}" style="color: #F56C6C;text-align: center">心跳异常</td>
+            <td th:text="${node.heartbeatTime}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+
+<script type="text/javascript">
+    layui.use(['form','table','laydate','jquery'], function () {
+    });
+</script>
+</html>

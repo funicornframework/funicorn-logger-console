@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Funicorn Logger</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<style>
+    .layui-fluid {padding:0 0 !important;}
+    .head-row{padding-left: 5px;padding-right: 5px;margin: auto !important}
+    .head-left-row {font-size: 30px;height: 100px;text-align: center;color: white;line-height: 100px}
+    .head-right-row {font-size: 15px;height: 100px;text-align: center;color: white;line-height: 100px}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-header" th:replace="header.html"></div>
+    <div class="layui-row layui-col-space30 head-row">
+        <div class="layui-col-md4">
+            <div class="layui-row" style="background-color: #00C0EF;height: 100px">
+                <div class="layui-col-md5 head-left-row" style="background-color: #009ABF" th:text="${apps.appNum}">
+                </div>
+                <div class="layui-col-md7 head-right-row">
+                    客户端数目
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-row" style="background-color: #F39C12;height: 100px">
+                <div class="layui-col-md5 head-left-row" style="background-color: #C27D0E" th:text="${apps.nodeNum}">
+                </div>
+                <div class="layui-col-md7 head-right-row">
+                    历史节点数目
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-row" style="background-color: #5FB878;height: 100px">
+                <div class="layui-col-md5 head-left-row" style="background-color: #009f95" th:text="${apps.healthNodeNum}">
+                </div>
+                <div class="layui-col-md7 head-right-row">
+                    当前健康节点数目
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-row" style="padding-left: 20px;padding-right: 20px">
+        <table id="appdata" lay-filter="app">
+            <script type="text/html" id="appInfoBar">
+                <a class="layui-btn layui-btn-xs" lay-event="lookNode">节点信息</a>
+            </script>
+        </table>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript"  th:inline="none">
+    layui.use(['form','table','jquery','layer'], function () {
+        const table = layui.table;
+        const $ = layui.jquery;
+        const layer = layui.layer;
+        const form = layui.form;
+        // 动态渲染表格
+        const initTable =table.render({
+            elem: '#appdata'
+            , url: '/appInfo/list' //数据接口
+            , method: 'get'
+            , response: {
+                statusName: 'code' //规定数据状态的字段名称，默认：code
+                , statusCode: 200 //规定成功的状态码，默认：0
+                , msgName: 'message' //规定状态信息的字段名称，默认：msg
+                , countName: 'count' //规定数据总数的字段名称，默认：count
+                , dataName: 'data' //规定数据列表的字段名称，默认：data
+            }
+            , cols: [[
+                {field: 'appName', title: '客户端标识', width: 400}
+                , {field: 'nodeNum', title: '历史节点数目', minWidth: 100}
+                , {field: 'healthNodeNum', title: '当前健康节点数目', width: 300}
+                , {title: '操作', toolbar: '#appInfoBar',fixed: 'right',width: 250}
+            ]]
+        });
+
+        //触发行单击事件
+        table.on('tool(app)', function (obj) {
+            if (obj.event === 'lookNode') {
+                //编辑用户
+                layer.open({
+                    type: 2,
+                    content: "/node?appName=" + obj.data.appName,
+                    area: ["70%", "70%"],
+                    title: ['节点信息'],
+                    fixed: false,
+                    shadeClose: true
+                })
+            }
+        });
+
+        // 校验
+        form.verify({
+            nickname: function (value) {
+                if (!value) {
+                    return '请输入昵称';
+                }
+            },
+            username: function (value) {
+                if (!value) {
+                    return '请输入账号';
+                }
+            },
+            password: function (value) {
+                if (!value) {
+                    return '请输入密码';
+                }
+            }
+        })
+
+        //监听修改昵称事件
+        form.on('submit(editNicknameBtn)',function (data) {
+            $.ajax({
+                url:'/user/editNickname',
+                method: 'post',
+                data:  JSON.stringify(data.field),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'JSON',
+                success: function (res) {
+                    //关闭弹出层
+                    layer.close(layer.index);
+                    if (res.code===200) {
+                        initTable.reload()
+                    } else {
+                        layer.msg(res.message)
+                    }
+                },
+                error: function (res) {
+                    layer.close(layer.index);
+                    layer.msg('服务器异常')
+                }
+            })
+            return false;
+        });
+
+        //监听修改密码事件
+        form.on('submit(editPwdBtn)',function (data) {
+            $.ajax({
+                url:'/user/editPwd',
+                method: 'post',
+                data:  JSON.stringify(data.field),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'JSON',
+                success: function (res) {
+                    //关闭弹出层
+                    layer.close(layer.index);
+                    if (res.code===200) {
+                        layer.msg('密码修改成功')
+                    } else {
+                        layer.msg(res.message)
+                    }
+                },
+                error: function (res) {
+                    layer.msg('服务器异常')
+                }
+            })
+            return false;
+        });
+
+        //监听查询事件
+        form.on('submit(search)',function (data) {
+            let startTime;
+            let endTime;
+            if (data && data.field && data.field.rangeTime) {
+                let rangeTime = data.field.rangeTime.split(' - ')
+                startTime = rangeTime[0] + ' 00:00:00'
+                endTime = rangeTime[1] + ' 23:59:59'
+            }
+            initTable.reload({
+                where: {
+                    username: data.field.username,
+                    nickname: data.field.nickname
+                }})
+            return false;
+        });
+
+        //监听查询事件
+        form.on('submit(addUserBtn)',function (data) {
+            $.ajax({
+                url:'/user/add',
+                method: 'post',
+                data:  JSON.stringify(data.field),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'JSON',
+                success: function (res) {
+                    //关闭弹出层
+                    layer.close(layer.index);
+                    if (res.code===200) {
+                        initTable.reload()
+                    } else {
+                        layer.msg(res.message)
+                    }
+                },
+                error: function (res) {
+                    layer.msg('服务器异常')
+                }
+            })
+            return false;
+        });
+
+        //添加用户点击事件
+        $('#addUserBoxBtn').on('click',function (data){
+            console.log(1111111)
+            //添加用户
+            layer.open({
+                type: 1,
+                content: $('#addUserBox'),
+                area: ["450px", "350px"],
+                title: ['添加用户'],
+                fixed: false,
+                shadeClose: true,
+                success: function () {
+                },
+                cancel: function () {
+                },
+            })
+        });
+    });
+</script>
+</html>
