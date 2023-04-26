@@ -78,16 +78,10 @@
     <div style="padding: 20px">
         <form class="layui-form">
             <div class="layui-form-item">
-                <div class="layui-inline" style="display: none">
-                    <label class="layui-form-label">用户id</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="userId2" name="userId" required autocomplete="off" class="layui-input">
-                    </div>
-                </div>
                 <div class="layui-inline">
                     <label class="layui-form-label" style="width: auto">密码</label>
                     <div class="layui-input-inline" style="width: 270px">
-                        <input type="text" name="password" placeholder="请输入密码" lay-verify="password" required autocomplete="off" class="layui-input">
+                        <input type="text" id="editPwdVal" name="password" placeholder="请输入密码" lay-verify="password" required autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
@@ -174,6 +168,7 @@
             ]]
         });
 
+        let checkedUserId = null;
         //触发行单击事件
         table.on('tool(user)', function (obj) {
             if (obj.event === 'editNickname') {
@@ -186,13 +181,9 @@
                     fixed: false,
                     shadeClose: true,
                     success: function () {
-                        $('#userId').val(obj.data.id);
+                        checkedUserId = obj.data.id;
                         $('#originalNickname').val(obj.data.nickname);
-                    },
-                    cancel: function () {
-                        $('#userId').val(null);
-                        $('#originalNickname').val(null);
-                    },
+                    }
                 })
             }
             if (obj.event === 'editPwd') {
@@ -205,11 +196,8 @@
                     fixed: false,
                     shadeClose: true,
                     success: function () {
-                        $('#userId2').val(obj.data.id);
-                    },
-                    cancel: function () {
-                        $('#userId2').val(null);
-                    },
+                        checkedUserId = obj.data.id;
+                    }
                 })
             }
             if (obj.event === 'delete') {
@@ -257,6 +245,7 @@
 
         //监听修改昵称事件
         form.on('submit(editNicknameBtn)',function (data) {
+            data.field.userId = checkedUserId;
             $.ajax({
                 url:'/user/editNickname',
                 method: 'post',
@@ -282,6 +271,7 @@
 
         //监听修改密码事件
         form.on('submit(editPwdBtn)',function (data) {
+            data.field.userId = checkedUserId;
             $.ajax({
                 url:'/user/editPwd',
                 method: 'post',

@@ -18,4 +18,4 @@ spring:
     encoding: utf-8
     servlet:
       content-type: text/html
-    cache: true
+    cache: false
