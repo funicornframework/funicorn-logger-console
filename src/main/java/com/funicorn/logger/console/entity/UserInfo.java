@@ -1,10 +1,11 @@
 package com.funicorn.logger.console.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.funicorn.framework.common.context.core.ContextUser;
 import com.funicorn.framework.common.datasource.model.BaseEntity;
+
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -15,7 +16,7 @@ import com.funicorn.framework.common.datasource.model.BaseEntity;
  * @since 2023-03-03
  */
 @TableName("user_info")
-public class UserInfo extends BaseEntity implements ContextUser {
+public class UserInfo extends ContextUser {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +45,68 @@ public class UserInfo extends BaseEntity implements ContextUser {
      * 用户类型
      */
     private String userType;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @TableField(value = "created_time", fill = FieldFill.INSERT)
+    private LocalDateTime createdTime;
+
+    /** 更新时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @TableField(value = "updated_time", fill = FieldFill.UPDATE)
+    private LocalDateTime updatedTime;
+
+    /** 创建人 */
+    @TableField(value = "created_by", fill = FieldFill.INSERT)
+    private String createdBy;
+
+    /** 更新人 */
+    @TableField(value = "updated_by", fill = FieldFill.UPDATE)
+    private String updatedBy;
+
+    /** 删除标识 0未删除 1已删除 */
+    @TableLogic(value = "0",delval = "1")
+    @TableField(value = "deleted", fill = FieldFill.INSERT)
+    private String deleted;
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public LocalDateTime getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(LocalDateTime updatedTime) {
+        this.updatedTime = updatedTime;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public String getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(String deleted) {
+        this.deleted = deleted;
+    }
 
     public String getUserType() {
         return userType;
@@ -84,6 +147,7 @@ public class UserInfo extends BaseEntity implements ContextUser {
         return null;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
