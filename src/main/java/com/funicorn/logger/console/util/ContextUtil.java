@@ -2,6 +2,7 @@ package com.funicorn.logger.console.util;
 
 import com.funicorn.logger.console.config.WebRequestFilter;
 import com.funicorn.logger.console.entity.UserInfo;
+import com.funicorn.logger.console.model.ContextUserInfo;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -19,8 +20,8 @@ public class ContextUtil {
      *
      * @return {@link UserInfo}
      */
-    public static UserInfo getContextUser(){
+    public static ContextUserInfo getContextUser(){
         HttpSession session = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest().getSession();
-        return (UserInfo) session.getAttribute(WebRequestFilter.USER_INFO_KEY);
+        return (ContextUserInfo) session.getAttribute(WebRequestFilter.USER_INFO_KEY);
     }
 }

@@ -1,7 +1,8 @@
-package com.funicorn.logger.console.entity;
+package com.funicorn.logger.console.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.funicorn.framework.common.context.core.ContextUser;
 
 import java.time.LocalDateTime;
 
@@ -13,31 +14,12 @@ import java.time.LocalDateTime;
  * @author Aimee
  * @since 2023-03-03
  */
-@TableName("user_info")
-public class UserInfo {
-
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * 主键id
-     */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
+public class ContextUserInfo extends ContextUser {
 
     /**
      * 昵称
      */
     private String nickname;
-
-    /**
-     * 用户名
-     */
-    private String username;
-
-    /**
-     * 密码
-     */
-    private String password;
 
     /**
      * 用户类型
@@ -65,14 +47,6 @@ public class UserInfo {
     @TableLogic(value = "0",delval = "1")
     @TableField(value = "deleted", fill = FieldFill.INSERT)
     private String deleted;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public LocalDateTime getCreatedTime() {
         return createdTime;
@@ -130,28 +104,8 @@ public class UserInfo {
         this.nickname = nickname;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     @Override
-    public String toString() {
-        return "UserInfo{" +
-        "id=" + id +
-        ", username=" + username +
-        ", password=" + password +
-        "}";
+    public String getTenantId() {
+        return null;
     }
 }
