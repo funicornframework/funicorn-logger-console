@@ -39,9 +39,11 @@ funicorn:
 ###默认账号密码
 admin/123456
 
-### 客户端连接方式
-客户端添加maven依赖  
+### 客户端连接方式 
 ````
+/**
+ * 客户端添加maven依赖
+ */
 <dependency>
    <groupId>io.github.funicornframework</groupId>
    <artifactId>funicorn-logger-core</artifactId>
@@ -70,8 +72,6 @@ public class CustomUserContextProvider extends ContextUserProvider {
     }
 }
 ````
-###作者联系方式
-有疑问可联系作者，微信号：Funicorn_cloud
 
 ### 展示
 http://139.9.72.138:9900/login  
@@ -80,3 +80,7 @@ http://139.9.72.138:9900/login
 ![img.png](img.png)  
 ![img_2.png](img_2.png)  
 ![img_3.png](img_3.png)
+
+###作者联系方式
+有疑问可联系作者，微信号：Funicorn_cloud  
+![img_4.png](img_4.png)
