@@ -1,0 +1,1 @@
+java -Xms512M -Xmx512M -jar $APP_NAME --spring.config.location=config/application.yml 1>nohup.out 2>&1 &
