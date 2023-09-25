@@ -74,6 +74,7 @@ public class AuthHandler extends AbstractCommandHandler {
         authResponse.setAuthToken(NettyFactory.getInstance().getChannel(ctx.channel().id()).getAuthToken());
         messageExt.setData(authResponse);
         ctx.channel().writeAndFlush(messageExt);
+        logger.info("[{}] auth success.",NettyFactory.getInstance().getChannel(ctx.channel().id()).getTargetAddr());
     }
 
     private void authFailed(ChannelHandlerContext ctx){
@@ -81,7 +82,6 @@ public class AuthHandler extends AbstractCommandHandler {
         messageExt.setCommand(NettyCommandEnum.AUTH_COMMAND.getCode());
         messageExt.setData(new AuthResponse());
         ctx.channel().writeAndFlush(messageExt);
-        logger.warn("[{}] auth failed, the connection will be closed.",NettyFactory.getInstance().getChannel(ctx.channel().id()).getTargetAddr());
-        ctx.channel().close();
+        logger.warn("[{}] auth failed.",NettyFactory.getInstance().getChannel(ctx.channel().id()).getTargetAddr());
     }
 }
