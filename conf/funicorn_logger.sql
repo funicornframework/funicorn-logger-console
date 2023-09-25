@@ -39,6 +39,7 @@ CREATE TABLE `app_node` (
   `id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键id',
   `app_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '客户端标识',
   `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'IP',
+  `port` int NOT NULL DEFAULT '80' COMMENT '端口',
   `online` int NOT NULL DEFAULT '1' COMMENT '是否在线 0 离线 1在线',
   `heartbeat_time` datetime DEFAULT NULL COMMENT '心跳时间',
   `deleted` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '删除标识',
@@ -113,7 +114,8 @@ CREATE TABLE `user_info` (
   `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '昵称',
   `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
-  `user_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'normal' COMMENT '用户类型 super/admin/normal',
+  `client_secret` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '客户端密钥',
+  `user_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'normal' COMMENT '用户类型 admin/normal',
   `deleted` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '删除标识',
   `created_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_time` datetime DEFAULT NULL,
@@ -123,4 +125,4 @@ CREATE TABLE `user_info` (
   UNIQUE KEY `username_index` (`username`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `funicorn_logger`.`user_info` (`id`, `nickname`, `username`, `password`, `user_type`, `deleted`, `created_by`, `created_time`, `updated_by`, `updated_time`) VALUES ('1', '超级管理员', 'admin', '$2a$10$S8YPF7oVC13iLYzokOqIYuHcfeU8T725U/B.rdaW0/YjdymWlIy8S', 'Admin', '0', NULL, '2023-03-08 11:42:15', NULL, NULL);
+INSERT INTO `funicorn_logger`.`user_info` (`id`, `nickname`, `username`, `password`,`client_secret`,`user_type`, `deleted`, `created_by`, `created_time`, `updated_by`, `updated_time`) VALUES ('1', '超级管理员', 'admin', '$2a$10$S8YPF7oVC13iLYzokOqIYuHcfeU8T725U/B.rdaW0/YjdymWlIy8S', '9eec08f270e4401ab01a73635e8040f0', 'Admin', '0', NULL, '2023-03-08 11:42:15', NULL, NULL);
