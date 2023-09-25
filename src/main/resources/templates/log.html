@@ -21,10 +21,10 @@
         <form class="layui-form" id="searchForm" method="get">
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">客户端标识</label>
+                    <label class="layui-form-label">应用模块</label>
                     <div class="layui-input-inline">
                         <select name="appName" id="appNameSelect" lay-search="">
-                            <option value="">请选择客户端标识</option>
+                            <option value="">请选择应用模块</option>
                         </select>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
     <div class="layui-row" style="padding-left: 20px;padding-right: 20px">
         <table id="logdata" lay-filter="log">
             <script type="text/html" id="logInfoBar">
-                <a class="layui-btn layui-btn-xs" lay-event="info">详情</a>
+                <a class="layui-btn layui-btn-xs layui-btn-primary layui-border-green" lay-event="info">详情</a>
             </script>
         </table>
     </div>
@@ -139,7 +139,7 @@
             , limits: [10, 20, 50, 100]
             , limit: 10
             , cols: [[
-                {field: 'appName', title: '客户端标识', width: 200}
+                {field: 'appName', title: '应用模块', width: 200}
                 , {field: 'content', title: '请求名称', width: 250}
                 , {field: 'requestUrl', title: '请求路径', width: 200}
                 , {field: 'operationType', title: '类型', width: 100}

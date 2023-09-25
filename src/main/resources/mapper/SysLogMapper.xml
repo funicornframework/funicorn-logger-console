@@ -2,4 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.funicorn.logger.console.mapper.SysLogMapper">
 
+    <select id="queryCountByRangeTime" parameterType="com.funicorn.logger.console.model.CountLogModel" resultType="com.funicorn.logger.console.model.CountLogReturnModel">
+        select count(1) as count,app_name
+        from sys_log
+        where operation_time >= #{countLogModel.startTime} and operation_time <![CDATA[ <= ]]> #{countLogModel.endTime}
+          and app_name in (select app_name from app_info where deleted = '0')
+        <if test="countLogModel.appName!='' and countLogModel.appName!=null">
+            and app_name = #{countLogModel.appName}
+        </if>
+        GROUP BY app_name
+    </select>
 </mapper>

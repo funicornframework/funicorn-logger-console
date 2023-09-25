@@ -38,6 +38,11 @@ public class AppNode extends BaseEntity {
     private String ip;
 
     /**
+     * 端口
+     * */
+    private Integer port;
+
+    /**
      * 是否在线 0 离线 1在线
      */
     private Integer online;
@@ -47,6 +52,14 @@ public class AppNode extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime heartbeatTime;
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
 
     public LocalDateTime getHeartbeatTime() {
         return heartbeatTime;

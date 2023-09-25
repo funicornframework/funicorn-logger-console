@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.UUID;
 
 /**
  * <p>
@@ -35,6 +36,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         userInfo.setUsername(userDTO.getUsername());
         userInfo.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         userInfo.setNickname(userDTO.getNickname());
+        userInfo.setClientSecret(UUID.randomUUID().toString().replaceAll("-",""));
         save(userInfo);
         if (StringUtils.isBlank(userDTO.getNickname())) {
             LambdaUpdateWrapper<UserInfo> updateWrapper = new LambdaUpdateWrapper<>();

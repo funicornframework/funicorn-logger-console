@@ -13,4 +13,11 @@ import com.funicorn.logger.console.entity.AppNode;
  */
 public interface IAppNodeService extends IService<AppNode> {
 
+    /**
+     * 新增或保存节点
+     * @param appName appName
+     * @param ip ip
+     * @param port port
+     */
+    void saveOrUpdateAppNode(String appName,String ip, int port);
 }

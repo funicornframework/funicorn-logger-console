@@ -6,7 +6,7 @@ client即为产生日志的各个系统，server端即为我们现在部署的�
 ### 食用方式一
 #### 下载源码自行编译并部署
 ````
-1、创建数据库，执行/config目录下funicorn_logger.sql文件  
+1、创建数据库，执行/conf目录下funicorn_logger.sql文件  
 2、修改application.yml数据库配置文件  
 3、启动 java -jar
 ````
@@ -16,7 +16,7 @@ client即为产生日志的各个系统，server端即为我们现在部署的�
 1、解压   
      windows：用解压软件  
      linux：tar -zxvf xxxx  
-2、创建数据库，执行config目录下funicorn_logger.sql文件  
+2、创建数据库，执行conf目录下funicorn_logger.sql文件  
 3、修改config目录下的application.yml配置文件  
 4、部署  
      windows：执行win-start.bat   
@@ -77,10 +77,10 @@ public class CustomUserContextProvider extends ContextUserProvider {
 http://139.9.72.138:9900/login  
 账号密码：admin/123456  
 ！！！真实数据，请勿私自更改！！！ 谢谢配合
-![img.png](img.png)  
-![img_2.png](img_2.png)  
-![img_3.png](img_3.png)
+![img.png](introduce/img.png)  
+![img_2.png](introduce/img_2.png)  
+![img_3.png](introduce/img_3.png)
 
 ###作者联系方式
 有疑问可联系作者，微信号：Funicorn_cloud  
-![img_4.png](img_4.png)
+![img_4.png](introduce/img_4.png)

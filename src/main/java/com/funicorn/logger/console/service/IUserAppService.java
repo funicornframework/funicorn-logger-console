@@ -16,8 +16,8 @@ public interface IUserAppService extends IService<UserApp> {
     /**
      * 检查和绑定用户应用程序
      *
-     * @param username 用户名
+     * @param clientSecret 客户端密钥
      * @param appName  应用程序名称
      */
-    void checkAndBindUserApp(String username,String appName);
+    void checkAndBindUserApp(String clientSecret,String appName);
 }

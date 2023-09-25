@@ -2,4 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.funicorn.logger.console.mapper.AppInfoMapper">
 
+    <select id="queryAppInfoByClientId" parameterType="java.lang.String" resultType="com.funicorn.logger.console.entity.AppInfo">
+        select * from app_info where app_name = #{appName} limit 1
+    </select>
+
+    <update id="updateAppInfoNotDeleted" parameterType="java.lang.String">
+        update app_info set deleted = '0' where id = #{id}
+    </update>
 </mapper>

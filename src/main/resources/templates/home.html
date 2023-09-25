@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
     <meta charset="utf-8">
     <title>Funicorn Logger</title>
@@ -16,463 +16,400 @@
     .head-left-row {font-size: 30px;height: 100px;text-align: center;color: white;line-height: 100px}
     .head-right-row {font-size: 15px;height: 100px;text-align: center;color: white;line-height: 100px}
     .home-body {background-color: #ECF0F5}
-    .body-row {margin-left: 35px;margin-right: 35px;padding-top: 30px;padding-left: 30px;background-color: white}
+    .body-row {margin-left: 16px;margin-right: 16px;padding-top: 40px;padding-left:16px;background-color: white}
+    .console-body-head-row{height: 100px;}
 </style>
 <body>
 <div class="layui-fluid">
     <div class="layui-header" th:replace="header.html"></div>
     <div class="home-body">
-        <div class="layui-row layui-col-space30 head-row">
+        <div class="layui-row layui-col-space16" style="padding: 8px 8px 0 8px;margin: 0 !important;">
             <div class="layui-col-md4">
-                <a style="cursor: pointer" href="/app">
-                    <div class="layui-row" style="background-color: #00C0EF;height: 100px">
-                        <div class="layui-col-md5 head-left-row" style="background-color: #009ABF" th:text="${homeData.appNum}"></div>
-                        <div class="layui-col-md7 head-right-row">
-                            客户端数目
+                <div class="console-body-head-row">
+                    <div class="layui-col-md3" style="height: 100%;background-color: #4462BF">
+                        <i class="layui-icon layui-icon-flag" style="color: white;font-size: 50px;padding: 28px;line-height: 100px"></i>
+                    </div>
+                    <div class="layui-col-md9" style="color: white;padding: 16px;height: 100%;background-color: #5470C6">
+                        <div style="height: 40px;line-height: 40px;font-size: 16px;font-weight: bold" id="appNum" th:text="${homeData.nodeDesc}"></div>
+                        <div style="height: 1px;background-color: white"></div>
+                        <div style="line-height: 40px">
+                            <span>客户端节点（健康数 / 实例数）</span>
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
+
             <div class="layui-col-md4">
-                <a style="cursor: pointer" href="/log">
-                    <div class="layui-row" style="background-color: #5FB878;height: 100px">
-                        <div class="layui-col-md5 head-left-row" style="background-color: #009f95" th:text="${homeData.logNum}"></div>
-                        <div class="layui-col-md7 head-right-row">
-                            今日日志收集数量
+                <div class="console-body-head-row">
+                    <div class="layui-col-md3" style="height: 100%;background-color: #008548">
+                        <i class="layui-icon layui-icon-rss" style="color: white;font-size: 50px;padding: 28px;line-height: 100px"></i>
+                    </div>
+                    <div class="layui-col-md9" style="color: white;padding: 16px;height: 100%;background-color: #00A65A">
+                        <div style="height: 40px;line-height: 40px;font-size: 16px;font-weight: bold" id="nodeNum" th:text="${homeData.logNum}"></div>
+                        <div style="height: 1px;background-color: white"></div>
+                        <div style="line-height: 40px">
+                            <span>今日日志收集数</span>
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
+
             <div class="layui-col-md4">
-                <div class="layui-row" style="background-color: #F39C12;height: 100px">
-                    <div class="layui-col-md5 head-left-row" style="background-color: #C27D0E" th:text="${homeData.userNum}"></div>
-                    <div class="layui-col-md7 head-right-row">
-                        今日产生日志的用户数量
+                <div class="console-body-head-row">
+                    <div class="layui-col-md3" style="height: 100%;background-color: #D76834">
+                        <i class="layui-icon layui-icon-username" style="color: white;font-size: 50px;padding: 28px;line-height: 100px"></i>
+                    </div>
+                    <div class="layui-col-md9" style="color: white;padding: 16px;height: 100%;background-color: #F96D2C">
+                        <div style="height: 40px;line-height: 40px;font-size: 16px;font-weight: bold" id="healthNodeNum" th:text="${homeData.userNum}"></div>
+                        <div style="height: 1px;background-color: white"></div>
+                        <div style="line-height: 40px">
+                            <span>今日活跃用户数</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <hr style="border-bottom:3px solid white!important;"/>
-        <div class="layui-row body-row">
-            <div class="layui-col-md5">
-                <div id="pieLogType" style="width: 100%;height:400px;"></div>
-            </div>
-            <div class="layui-col-md5 layui-col-md-offset2">
-                <div id="appLogNumChart" style="width: 100%;height:400px;"></div>
+        <hr style="border-bottom:2px solid white!important;"/>
+        <div class="layui-row" style="height: 500px;padding: 0 16px 0 16px">
+            <div style="height: 100%;width: 100%;background-color: white">
+                <div style="height: 50px">
+                    <div class="layui-form" style="float: left;margin: 8px 0 0 8px">
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <select name="appName" id="appNameSelect" lay-filter="appNameSelect">
+                                    <option value="">全部应用</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="float: right;margin: 8px 8px 0 0">
+                        <button class="layui-btn layui-btn-primary layui-border-black layui-btn-sm" id="countToday">今日</button>
+                        <button class="layui-btn layui-btn-primary layui-border-black layui-btn-sm" id="countWeek">本周</button>
+                        <button class="layui-btn layui-btn-primary layui-border-black layui-btn-sm" id="countMonth">本月</button>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 46px !important;">自定义:</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="rangeTime" name="rangeTime" class="layui-input" placeholder="请选择时间范围">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="countByRangeTimeChart" style="height: 450px;width: 100%"></div>
             </div>
         </div>
-        <hr style="border-bottom:3px solid white!important;"/>
-        <div class="layui-row" style="margin-left: 35px;margin-right: 35px;padding: 30px;background-color: white">
-            <div class="layui-col-md5">
-                <div id="interfaceTop" style="width: 100%;height:400px;"></div>
-            </div>
-            <div class="layui-col-md5 layui-col-md-offset2">
-                <div id="userTop" style="width: 100%;height:400px;"></div>
+
+        <hr style="border-bottom:2px solid white!important;"/>
+
+        <div class="layui-row" style="height: 500px;padding: 0 16px 0 16px">
+            <div style="height: 100%;width: 100%;background-color: white">
+                <div style="height: 50px">
+                    <div class="layui-form" style="float: left;margin: 8px 0 0 8px">
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <select name="appName" id="appNameSelect1" lay-filter="appNameSelect1">
+                                    <option value="">全部应用</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="float: right;margin: 8px 8px 0 0">
+                        <button class="layui-btn layui-btn-primary layui-border-black layui-btn-sm" id="countToday1">今日</button>
+                        <button class="layui-btn layui-btn-primary layui-border-black layui-btn-sm" id="countWeek1">本周</button>
+                        <button class="layui-btn layui-btn-primary layui-border-black layui-btn-sm" id="countMonth1">本月</button>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 46px !important;">自定义:</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="rangeTime1" name="rangeTime" class="layui-input" placeholder="请选择时间范围">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="pieLogType" style="height: 440px;padding: 0 16px 0 16px"></div>
             </div>
         </div>
+
+        <hr style="border-bottom:2px solid white!important;"/>
     </div>
 </div>
 </body>
 
 <script type="text/javascript">
-    layui.use(['jquery'], function () {
+    layui.use(['jquery','laydate','form'], function () {
         const $ = layui.jquery;
-        //饼图
-        let pieChart = echarts.init(document.getElementById('pieLogType'));
-        let pieData = [
-            { value: 0, name: 'INSERT' },
-            { value: 0, name: 'UPDATE' },
-            { value: 0, name: 'DELETE' },
-            { value: 0, name: 'SELECT' },
-            { value: 0, name: 'LOGIN' },
-            { value: 0, name: 'LOGOUT' }
-        ];
-        let pieOption = {
-            title: {
-                text: '今日日志类型比例图',
-                left: 'center'
-            },
-            tooltip: {
-                trigger: 'item'
-            },
-            legend: {
-                orient: 'vertical',
-                left: 'left'
-            },
-            series: [
-                {
-                    type: 'pie',
-                    radius: '50%',
-                    data: pieData,
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                }
-            ]
+        const laydate = layui.laydate;
+        const form = layui.form;
+
+        //应用模块下拉选择框动态赋值
+        loadAppNameSelect();
+
+        /**
+         * 1、日志-日期分布图
+         * */
+        //默认rangeType 为今日
+        let countByRangeTimeParam = {
+            appName: null,
+            rangeType: 0,
+            startTime: null,
+            endTime: null,
         };
-        pieChart.setOption(pieOption);
-        $.ajax({
-            url:'/sysLog/groupByOperateType',
-            method:'get',
-            dataType:'JSON',
-            success: function (data) {
-                if (data.code===200 && data.data) {
-                    pieData = []
-                    $.each(data.data,function (index,value) {
-                        pieData.push({value:value,name:index})
-                    });
-                    pieOption = {
-                        title: {
-                            text: '今日日志类型比例图',
-                            left: 'center'
-                        },
-                        tooltip: {
-                            trigger: 'item'
-                        },
-                        legend: {
-                            orient: 'vertical',
-                            left: 'left'
-                        },
-                        series: [
-                            {
-                                type: 'pie',
-                                radius: '50%',
-                                data: pieData,
-                                emphasis: {
-                                    itemStyle: {
-                                        shadowBlur: 10,
-                                        shadowOffsetX: 0,
-                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                    }
-                                }
-                            }
-                        ]
-                    };
-                    pieChart.setOption(pieOption);
-                }
+        //默认加载今天的日志分布时间图
+        loadCountByRangeTimeChart();
+
+        //应用模块选中后触发
+        form.on('select(appNameSelect)', function(data){
+            countByRangeTimeParam.appName = data.value;
+            loadCountByRangeTimeChart();
+        });
+
+        //今日
+        $('#countToday').on('click',function () {
+            $('#countToday').addClass('layui-btn-disabled');
+            $('#countWeek').removeClass('layui-btn-disabled');
+            $('#countMonth').removeClass('layui-btn-disabled');
+            $('#rangeTime').val(null);
+            countByRangeTimeParam.rangeType = 0;
+            loadCountByRangeTimeChart();
+        });
+        //本周
+        $('#countWeek').on('click',function () {
+            $('#countWeek').addClass('layui-btn-disabled');
+            $('#countToday').removeClass('layui-btn-disabled');
+            $('#countMonth').removeClass('layui-btn-disabled');
+            $('#rangeTime').val(null);
+            countByRangeTimeParam.rangeType = 1;
+            loadCountByRangeTimeChart();
+        });
+        //本月
+        $('#countMonth').on('click',function () {
+            $('#countMonth').addClass('layui-btn-disabled');
+            $('#countWeek').removeClass('layui-btn-disabled');
+            $('#countToday').removeClass('layui-btn-disabled');
+            $('#rangeTime').val(null);
+            countByRangeTimeParam.rangeType = 2;
+            loadCountByRangeTimeChart();
+        });
+        // 自定义
+        laydate.render({
+            elem: '#rangeTime',
+            range: '至',
+            done: function(value){
+                $('#countMonth').removeClass('layui-btn-disabled');
+                $('#countWeek').removeClass('layui-btn-disabled');
+                $('#countToday').removeClass('layui-btn-disabled');
+                countByRangeTimeParam.rangeType = 3;
+                countByRangeTimeParam.startTime = value.split(" 至 ")[0];
+                countByRangeTimeParam.endTime =  value.split(" 至 ")[1];
+                loadCountByRangeTimeChart();
             }
         });
 
-        //客户端比例图
-        let appLogNumChart =  echarts.init(document.getElementById('appLogNumChart'));
-        let appLogNumChartOption = {
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
-            },
-            title: {
-                text: '今日日志客户端比例图',
-                left: 'center'
-            },
-            xAxis: {
-                type: 'category',
-                data: ['未连接客户端']
-            },
-            yAxis: {
-                type: 'value'
-            },
-            series: [
-                {
-                    data: [0],
-                    type: 'bar'
-                }
-            ]
-        };
-        appLogNumChart.setOption(appLogNumChartOption);
-        $.ajax({
-            url: '/sysLog/groupByAppName',
-            method: 'get',
-            dataType: 'JSON',
-            success: function (data) {
-                if (data.code===200 && data.data) {
-                    let xAxisData = [];
-                    let seriesData = [];
-                    $.each(data.data,function (index,value) {
-                        xAxisData.push(index);
-                        seriesData.push(value);
-                    });
-                    let appLogNumChartOption = {
-                        tooltip: {
-                            trigger: 'axis',
-                            axisPointer: {
-                                type: 'shadow'
-                            }
-                        },
-                        title: {
-                            text: '今日日志客户端比例图',
-                            left: 'center'
-                        },
-                        xAxis: {
-                            type: 'category',
-                            data: xAxisData
-                        },
-                        yAxis: {
-                            type: 'value'
-                        },
-                        series: [
-                            {
-                                data: seriesData,
-                                type: 'bar'
-                            }
-                        ]
-                    };
-                    appLogNumChart.setOption(appLogNumChartOption);
-                }
+        /**
+         * 加载
+         * */
+        function loadCountByRangeTimeChart() {
+            const countByRangeTimeChart = echarts.init(document.getElementById('countByRangeTimeChart'));
+            let title = '日志分布图';
+            if (countByRangeTimeParam.rangeType===0) {
+                title = '（今日）' + title;
+            } else if (countByRangeTimeParam.rangeType===1) {
+                title = '（本周）' + title;
+            } else if (countByRangeTimeParam.rangeType===2) {
+                title = '（本月）' + title;
+            } else if (countByRangeTimeParam.rangeType===3) {
+                title = '（' + countByRangeTimeParam.startTime + ' ~ ' + countByRangeTimeParam.endTime + '）' + title;
             }
-        });
-
-        //请求接口TOP5
-        let inTopChart = echarts.init(document.getElementById('interfaceTop'));
-        // 指定图表的配置项和数据
-        let inTopOption = {
-            title: {
-                text: '今日接口调用TOP5',
-                left: 'center'
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
+            let countByRangeTimeChartOptions = {
+                title: {
+                    text: title,
+                    left: 'center'
                 },
-                formatter: function (params) {
-                    return params[0].name + ': ' + params[0].value + '次';
-                }
-            },
-            legend: {},
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis: {
-                type: 'value',
-                boundaryGap: [0, 0.01]
-            },
-            yAxis: {
-                type: 'category',
-                data: ['TOP5', 'TOP4', 'TOP3', 'TOP2', 'TOP1']
-            },
-            series: [
-                {
-                    type: 'bar',
-                    data: [0, 0, 0, 0, 0],
-                    itemStyle: {
-                        //通常情况下：
-                        normal: {
-                            //每个柱子的颜色即为colorList数组里的每一项，如果柱子数目多于colorList的长度，则柱子颜色循环使用该数组
-                            color: function (params) {
-                                let colorList = [
-                                    "#3BA272",
-                                    "#4B6FB8",
-                                    "#FAC858",
-                                    "#C27D0E",
-                                    "#F25022"
-                                ];
-                                return colorList[params.dataIndex];
-                            }
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
                         }
                     }
-                }
-            ]
-        };
-        inTopChart.setOption(inTopOption);
-        $.ajax({
-            url: '/sysLog/requestUrlTop5',
-            method: 'get',
-            dataType: 'JSON',
-            success: function (data) {
-                if (data.code===200 && data.data) {
-                    let seriesData = [0, 0, 0, 0, 0];
-                    for (let i = 0; i < data.data.length; i++) {
-                        seriesData[4-i] ={value:data.data[i].requestNum, label:data.data[i].requestUrl, appName:data.data[i].appName};
+                },
+                legend: {show: false,data: []},
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: []
                     }
-                    inTopOption = {
-                        title: {
-                            text: '今日接口调用TOP5',
-                            left: 'center'
-                        },
-                        tooltip: {
-                            trigger: 'axis',
-                            axisPointer: {
-                                type: 'shadow'
-                            },
-                            formatter: function (params) {
-                                if (params[0].data.appName) {
-                                    return params[0].data.appName + ' <br/><br/>' + params[0].data.label + ': ' + params[0].value + '次';
-                                } else {
-                                    return params[0].name + ': ' + params[0].value + '次';
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: []
+            }
+            $.ajax({
+                url:'/sysLog/countByRangeTime',
+                method:'get',
+                data:  countByRangeTimeParam,
+                success: function (data) {
+                    if (data.code===200 && data.data) {
+                        if (data.data) {
+                            countByRangeTimeChartOptions.legend.data = data.data.appNames;
+                            countByRangeTimeChartOptions.xAxis[0].data = data.data.times;
+                            data.data.appNames.forEach(appName=>{
+                                let yData = {
+                                    name: appName,type: 'line', stack: 'Total', emphasis: {focus: 'series'},data:[]
                                 }
-                            }
-                        },
-                        legend: {},
-                        grid: {
-                            left: '3%',
-                            right: '4%',
-                            bottom: '3%',
-                            containLabel: true
-                        },
-                        xAxis: {
-                            type: 'value',
-                            boundaryGap: [0, 0.01]
-                        },
-                        yAxis: {
-                            type: 'category',
-                            data: ['TOP5', 'TOP4', 'TOP3', 'TOP2', 'TOP1']
-                        },
-                        series: [
-                            {
-                                type: 'bar',
-                                data: seriesData,
-                                itemStyle: {
-                                    normal: {
-                                        color: function (params) {
-                                            let colorList = [
-                                                "#3BA272",
-                                                "#4B6FB8",
-                                                "#FAC858",
-                                                "#C27D0E",
-                                                "#F25022"
-                                            ];
-                                            return colorList[params.dataIndex];
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    };
-                    inTopChart.setOption(inTopOption);
+                                data.data.counts[appName].forEach(count=>{
+                                    yData.data.push(count.sum);
+                                });
+                                countByRangeTimeChartOptions.series.push(yData);
+                            });
+                        }
+                        countByRangeTimeChart.setOption(countByRangeTimeChartOptions);
+                    }
                 }
+            });
+        }
+
+        /**
+         * 2、日志类型比例图
+         * */
+
+        //默认rangeType 为今日
+        let countByOperateTypeParam = {appName: null, rangeType: 0, startTime: null, endTime: null};
+        //默认加载今天的日志类型比例图
+        loadOperateTypeChart();
+
+        //应用模块选中后触发
+        form.on('select(appNameSelect1)', function(data){
+            countByOperateTypeParam.appName = data.value;
+            loadOperateTypeChart();
+        });
+
+        //今日
+        $('#countToday1').on('click',function () {
+            $('#countToday1').addClass('layui-btn-disabled');
+            $('#countWeek1').removeClass('layui-btn-disabled');
+            $('#countMonth1').removeClass('layui-btn-disabled');
+            $('#rangeTime1').val(null);
+            countByOperateTypeParam.rangeType = 0;
+            loadOperateTypeChart();
+        });
+        //本周
+        $('#countWeek1').on('click',function () {
+            $('#countWeek1').addClass('layui-btn-disabled');
+            $('#countToday1').removeClass('layui-btn-disabled');
+            $('#countMonth1').removeClass('layui-btn-disabled');
+            $('#rangeTime1').val(null);
+            countByOperateTypeParam.rangeType = 1;
+            loadOperateTypeChart();
+        });
+        //本月
+        $('#countMonth1').on('click',function () {
+            $('#countMonth1').addClass('layui-btn-disabled');
+            $('#countWeek1').removeClass('layui-btn-disabled');
+            $('#countToday1').removeClass('layui-btn-disabled');
+            $('#rangeTime1').val(null);
+            countByOperateTypeParam.rangeType = 2;
+            loadOperateTypeChart();
+        });
+        // 自定义
+        laydate.render({
+            elem: '#rangeTime1',
+            range: '至',
+            done: function(value){
+                $('#countMonth1').removeClass('layui-btn-disabled');
+                $('#countWeek1').removeClass('layui-btn-disabled');
+                $('#countToday1').removeClass('layui-btn-disabled');
+                countByOperateTypeParam.rangeType = 3;
+                countByOperateTypeParam.startTime = value.split(" 至 ")[0];
+                countByOperateTypeParam.endTime =  value.split(" 至 ")[1];
+                loadOperateTypeChart();
             }
         });
 
-        //活跃用户TOP5
-        let userTopChart = echarts.init(document.getElementById('userTop'));
-        let userTopOption = {
-            title: {
-                text: '今日活跃用户TOP5',
-                left: 'center'
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
+        //加载
+        function loadOperateTypeChart() {
+            const pieChart = echarts.init(document.getElementById('pieLogType'));
+            let title = '日志类型比例图';
+            if (countByOperateTypeParam.rangeType===0) {
+                title = '（今日）' + title;
+            } else if (countByOperateTypeParam.rangeType===1) {
+                title = '（本周）' + title;
+            } else if (countByOperateTypeParam.rangeType===2) {
+                title = '（本月）' + title;
+            } else if (countByOperateTypeParam.rangeType===3) {
+                title = '（' + countByOperateTypeParam.startTime + ' ~ ' + countByOperateTypeParam.endTime + '）' + title;
+            }
+            let pieOption = {
+                title: {
+                    text: title,
+                    left: 'center'
                 },
-                formatter: function (params) {
-                    return params[0].name + ': ' + params[0].value + '次';
-                }
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis: {
-                inverse:true,
-                type: 'value',
-                boundaryGap: [0, 0.01]
-            },
-            yAxis: {
-                type: 'category',
-                data: ['TOP5', 'TOP4', 'TOP3', 'TOP2', 'TOP1']
-            },
-            series: [
-                {
-                    type: 'bar',
-                    data: [0, 0, 0, 0, 0],
-                    itemStyle: {
-                        normal: {
-                            color: function (params) {
-                                let colorList = [
-                                    "#3BA272",
-                                    "#4B6FB8",
-                                    "#FAC858",
-                                    "#C27D0E",
-                                    "#F25022"
-                                ];
-                                return colorList[params.dataIndex];
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    left: 'center',
+                    y: 'bottom',
+                    orient: 'horizontal'
+                },
+                series: [
+                    {
+                        type: 'pie',
+                        radius: '70%',
+                        data: [],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
                             }
                         }
                     }
-                }
-            ]
-        };
-        userTopChart.setOption(userTopOption);
-        $.ajax({
-            url: '/sysLog/requestUserTop5',
-            method: 'get',
-            dataType: 'JSON',
-            success: function (data) {
-                if (data.code===200 && data.data) {
-                    let seriesData = [0, 0, 0, 0, 0];
-                    for (let i = 0; i < data.data.length; i++) {
-                        seriesData[4-i] ={value:data.data[i].requestNum, label:data.data[i].username};
+                ]
+            };
+
+            $.ajax({
+                url:'/sysLog/groupByOperateType',
+                method:'get',
+                dataType:'JSON',
+                data: countByOperateTypeParam,
+                success: function (data) {
+                    if (data.data) {
+                        let seriesData = [];
+                        $.each(data.data,function (index,value) {
+                            seriesData.push({value:value,name:index})
+                        });
+                        pieOption.series[0].data = seriesData;
+                        pieChart.setOption(pieOption);
                     }
-                    userTopOption = {
-                        title: {
-                            text: '今日活跃用户TOP5',
-                            left: 'center'
-                        },
-                        tooltip: {
-                            trigger: 'axis',
-                            axisPointer: {
-                                type: 'shadow'
-                            },
-                            formatter: function (params) {
-                                if (params[0].data.label) {
-                                    return params[0].data.label + ': ' + params[0].value + '次';
-                                } else {
-                                    return params[0].name + ': ' + params[0].value + '次';
-                                }
-                            }
-                        },
-                        legend: {},
-                        grid: {
-                            left: '3%',
-                            right: '4%',
-                            bottom: '3%',
-                            containLabel: true
-                        },
-                        xAxis: {
-                            type: 'value',
-                            boundaryGap: [0, 0.01]
-                        },
-                        yAxis: {
-                            type: 'category',
-                            data: ['TOP5', 'TOP4', 'TOP3', 'TOP2', 'TOP1']
-                        },
-                        series: [
-                            {
-                                type: 'bar',
-                                data: seriesData,
-                                itemStyle: {
-                                    normal: {
-                                        color: function (params) {
-                                            let colorList = [
-                                                "#3BA272",
-                                                "#4B6FB8",
-                                                "#FAC858",
-                                                "#C27D0E",
-                                                "#F25022"
-                                            ];
-                                            return colorList[params.dataIndex];
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    };
-                    userTopChart.setOption(userTopOption);
                 }
-            }
-        });
+            });
+        }
+
+        //加载应用列表选项
+        function loadAppNameSelect () {
+            $.ajax({
+                url:'/appInfo/list',
+                method:'get',
+                dataType:'JSON',
+                success: function (data) {
+                    $.each(data.data,function (index,value) {
+                        $('#appNameSelect').append(new Option(value.appName,value.appName));
+                        $('#appNameSelect1').append(new Option(value.appName,value.appName));
+                    });
+                    form.render('select')
+                }
+            })
+        }
     });
 
 </script>

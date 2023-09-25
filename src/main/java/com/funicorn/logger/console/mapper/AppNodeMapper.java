@@ -15,4 +15,18 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface AppNodeMapper extends BaseMapper<AppNode> {
 
+    /**
+     * 查询节点信息
+     * @param appName appName
+     * @param ip ip
+     * @param port port
+     * @return {@link AppNode}
+     */
+    AppNode queryAppNode(String appName,String ip, String port);
+
+    /**
+     * 恢复app_info
+     * @param id id
+     * */
+    void updateAppNodeNotDeleted(String id);
 }

@@ -4,13 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.funicorn.boot.starter.model.Result;
+import com.funicorn.framework.common.base.date.DateTimeUtil;
+import com.funicorn.logger.console.dto.CountByRangeTimeDTO;
 import com.funicorn.logger.console.dto.SysLogQueryDTO;
 import com.funicorn.logger.console.entity.SysLog;
 import com.funicorn.logger.console.service.IAppInfoService;
 import com.funicorn.logger.console.service.ISysLogService;
-import com.funicorn.logger.console.vo.AppInfoVO;
-import com.funicorn.logger.console.vo.RequestTopVO;
-import com.funicorn.logger.console.vo.ResultPage;
+import com.funicorn.logger.console.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,47 +43,49 @@ public class SysLogController {
     private IAppInfoService appInfoService;
 
     /**
+     * 按照事件统计日志数量
+     * @param countByRangeTimeDTO countByRangeTimeDTO
+     * @return Result
+     * */
+    @ResponseBody
+    @GetMapping("/countByRangeTime")
+    public Result<CountLogVO> countByRangeTime(CountByRangeTimeDTO countByRangeTimeDTO){
+        if (countByRangeTimeDTO.getRangeType()==0) {
+            countByRangeTimeDTO.setStartTime(DateTimeUtil.getDayStartTime(new Date()));
+            countByRangeTimeDTO.setEndTime(DateTimeUtil.getDayEndTime(new Date()));
+        }
+        if (countByRangeTimeDTO.getRangeType()==1) {
+            countByRangeTimeDTO.setStartTime(DateTimeUtil.getWeekStartTime(new Date()));
+            countByRangeTimeDTO.setEndTime(DateTimeUtil.getWeekEndTime(new Date()));
+        }
+        if (countByRangeTimeDTO.getRangeType()==2) {
+            countByRangeTimeDTO.setStartTime(DateTimeUtil.getMonthStartTime(new Date()));
+            countByRangeTimeDTO.setEndTime(DateTimeUtil.getMonthEndTime(new Date()));
+        }
+        return Result.ok(sysLogService.countByRangeTime(countByRangeTimeDTO.getStartTime(),countByRangeTimeDTO.getEndTime(),countByRangeTimeDTO.getAppName()));
+    }
+
+    /**
      * group by操作类型
      *
      * @return Result
      */
     @ResponseBody
     @GetMapping("/groupByOperateType")
-    public Result<Map<String, Object>> groupByOperateType(){
-        return Result.ok(sysLogService.groupByOperateType());
-    }
-
-    /**
-     * group by操作类型
-     *
-     * @return Result
-     */
-    @ResponseBody
-    @GetMapping("/groupByAppName")
-    public Result<Map<String, Object>> groupByAppName(){
-        return Result.ok(sysLogService.groupByAppName());
-    }
-
-    /**
-     * 请求url top5
-     *
-     * @return Result
-     */
-    @ResponseBody
-    @GetMapping("/requestUrlTop5")
-    public Result<List<RequestTopVO>> requestUrlTop5(){
-        return Result.ok(sysLogService.requestUrlTop5());
-    }
-
-    /**
-     * 请求用户top5
-     *
-     * @return Result
-     */
-    @ResponseBody
-    @GetMapping("/requestUserTop5")
-    public Result<List<RequestTopVO>> requestUserTop5(){
-        return Result.ok(sysLogService.requestUserTop5());
+    public Result<Map<String, Object>> groupByOperateType(CountByRangeTimeDTO countByRangeTimeDTO){
+        if (countByRangeTimeDTO.getRangeType()==0) {
+            countByRangeTimeDTO.setStartTime(DateTimeUtil.getDayStartTime(new Date()));
+            countByRangeTimeDTO.setEndTime(DateTimeUtil.getDayEndTime(new Date()));
+        }
+        if (countByRangeTimeDTO.getRangeType()==1) {
+            countByRangeTimeDTO.setStartTime(DateTimeUtil.getWeekStartTime(new Date()));
+            countByRangeTimeDTO.setEndTime(DateTimeUtil.getWeekEndTime(new Date()));
+        }
+        if (countByRangeTimeDTO.getRangeType()==2) {
+            countByRangeTimeDTO.setStartTime(DateTimeUtil.getMonthStartTime(new Date()));
+            countByRangeTimeDTO.setEndTime(DateTimeUtil.getMonthEndTime(new Date()));
+        }
+        return Result.ok(sysLogService.groupByOperateType(countByRangeTimeDTO.getStartTime(),countByRangeTimeDTO.getEndTime(),countByRangeTimeDTO.getAppName()));
     }
 
     @ResponseBody

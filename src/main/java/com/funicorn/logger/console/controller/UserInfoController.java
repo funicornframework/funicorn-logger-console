@@ -128,7 +128,6 @@ public class UserInfoController {
     @GetMapping("/list")
     public Result<List<UserInfo>> list(@RequestParam(required = false) String username,@RequestParam(required = false) String nickname){
         LambdaQueryWrapper<UserInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ne(UserInfo::getUsername, ContextUtil.getContextUser().getUsername());
         if (StringUtils.isNotBlank(username)) {
             queryWrapper.like(UserInfo::getUsername,username);
         }
@@ -136,7 +135,7 @@ public class UserInfoController {
             queryWrapper.like(UserInfo::getNickname,nickname);
         }
         List<UserInfo> userInfos = userInfoService.list(queryWrapper);
-        userInfos.forEach(userInfo -> userInfo.setPassword("********************************"));
+        userInfos.forEach(userInfo -> userInfo.setPassword("****************"));
         return Result.ok(userInfos);
     }
 

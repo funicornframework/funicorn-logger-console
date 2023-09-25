@@ -7,7 +7,6 @@ import com.funicorn.logger.console.service.IAppInfoService;
 import com.funicorn.logger.module.NettyCommandEnum;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -22,13 +21,11 @@ public class LogHeartBeatHandler extends AbstractCommandHandler {
 
     @Resource
     private IAppInfoService appInfoService;
-    @Resource
-    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Override
     public void execute(ChannelHandlerContext ctx, MessageExt messageExt) throws Exception {
         NettyFactory.getInstance().bind(ctx.channel(), (String) messageExt.getData());
-        threadPoolTaskExecutor.execute(() -> appInfoService.heartBeat( NettyFactory.getInstance().getChannel(ctx.channel().id())));
+        appInfoService.heartBeat(NettyFactory.getInstance().getChannel(ctx.channel().id()));
     }
 
     @Override

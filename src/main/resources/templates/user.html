@@ -15,17 +15,15 @@
 <body>
 <div class="layui-fluid">
     <div class="layui-header" th:replace="header.html"></div>
-    <div class="layui-row" style="padding-top: 20px">
+    <div class="layui-row" style="padding-top: 16px;padding-left: 16px">
         <form class="layui-form">
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">账号</label>
                     <div class="layui-input-inline">
                         <input type="text" id="username" name="username" placeholder="请输入账号" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">昵称</label>
                     <div class="layui-input-inline">
                         <input type="text" id="nickname" name="nickname" placeholder="请输入昵称" autocomplete="off" class="layui-input">
                     </div>
@@ -39,12 +37,13 @@
             </div>
         </form>
     </div>
-    <div class="layui-row" style="padding-left: 20px;padding-right: 20px">
+    <hr style="border-bottom:1px solid #d9d9d9!important; width: 100%;margin: auto"/>
+    <div class="layui-row" style="padding-left: 16px;padding-right: 16px">
         <table id="userdata" lay-filter="user">
             <script type="text/html" id="userInfoBar">
-                <a class="layui-btn layui-btn-xs" lay-event="editNickname">修改昵称</a>
-                <a class="layui-btn layui-btn-xs" lay-event="editPwd">修改密码</a>
-                <a class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
+                <a class="layui-btn layui-btn-xs layui-btn-primary layui-border-green" lay-event="editNickname">修改昵称</a>
+                <a class="layui-btn layui-btn-xs layui-btn-primary layui-border-blue" lay-event="editPwd">修改密码</a>
+                <a class="layui-btn layui-btn-xs layui-btn-primary layui-border-red" lay-event="delete">删除</a>
             </script>
         </table>
     </div>
@@ -157,14 +156,15 @@
                 , dataName: 'data' //规定数据列表的字段名称，默认：data
             }
             , cols: [[
-                {field: 'nickname', title: '昵称', width: 250}
-                , {field: 'username', title: '账号', width: 250}
-                , {field: 'password', title: '密码',minWidth: 200}
-                , {field: 'userType', title: '用户类型',width: 200, templet: function (data) {
+                {field: 'nickname', title: '昵称', width: 200}
+                , {field: 'username', title: '客户端标识 / 登录账号', width: 200}
+                , {field: 'password', title: '密码',width: 200}
+                , {field: 'clientSecret', title: '客户端密钥',minWidth: 200}
+                , {field: 'userType', title: '用户类型',width: 150, templet: function (data) {
                         if (data.userType==='Normal') {return '普通用户'}
                         if (data.userType==='Admin') {return '管理员'}}}
                 , {field: 'createdTime', title: '创建时间', width: 200}
-                , {title: '操作', toolbar: '#userInfoBar',fixed: 'right',width: 250}
+                , {title: '操作', toolbar: '#userInfoBar',fixed: 'right'}
             ]]
         });
 

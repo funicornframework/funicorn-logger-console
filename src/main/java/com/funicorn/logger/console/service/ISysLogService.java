@@ -1,9 +1,13 @@
 package com.funicorn.logger.console.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.funicorn.logger.console.dto.CountByRangeTimeDTO;
 import com.funicorn.logger.console.entity.SysLog;
+import com.funicorn.logger.console.vo.CountByRangeTimeVO;
+import com.funicorn.logger.console.vo.CountLogVO;
 import com.funicorn.logger.console.vo.RequestTopVO;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,29 +30,19 @@ public interface ISysLogService extends IService<SysLog> {
 
     /**
      * group by操作类型
-     *
+     * @param startTime startTime
+     * @param endTime endTime
+     * @param appName appName
      * @return {@link Map}<{@link String}, {@link Object}>
      */
-    Map<String, Object> groupByOperateType();
+    Map<String, Object> groupByOperateType(Date startTime, Date endTime, String appName);
 
     /**
-     * 集团通过应用程序名称
-     *
-     * @return {@link Map}<{@link String}, {@link Object}>
+     * 按照事件统计日志数量
+     * @param startTime startTime
+     * @param endTime endTime
+     * @param appName appName
+     * @return CountLogVO
      */
-    Map<String, Object> groupByAppName();
-
-    /**
-     * 请求url top5
-     *
-     * @return List
-     */
-    List<RequestTopVO> requestUrlTop5();
-
-    /**
-     * 请求url top5
-     *
-     * @return List
-     */
-    List<RequestTopVO> requestUserTop5();
+    CountLogVO countByRangeTime(Date startTime, Date endTime, String appName);
 }

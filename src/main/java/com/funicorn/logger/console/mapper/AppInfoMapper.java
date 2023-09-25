@@ -15,4 +15,16 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface AppInfoMapper extends BaseMapper<AppInfo> {
 
+    /**
+     * 查询应用
+     * @param appName appName
+     * @return AppInfo
+     * */
+    AppInfo queryAppInfoByClientId(String appName);
+
+    /**
+     * 恢复app_info
+     * @param id id
+     * */
+    void updateAppInfoNotDeleted(String id);
 }

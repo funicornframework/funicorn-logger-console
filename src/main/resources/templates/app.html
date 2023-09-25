@@ -11,49 +11,75 @@
 </head>
 <style>
     .layui-fluid {padding:0 0 !important;}
-    .head-row{padding-left: 5px;padding-right: 5px;margin: auto !important}
-    .head-left-row {font-size: 30px;height: 100px;text-align: center;color: white;line-height: 100px}
-    .head-right-row {font-size: 15px;height: 100px;text-align: center;color: white;line-height: 100px}
+    .console-body-head-row{
+        height: 100px;
+    }
 </style>
 <body>
 <div class="layui-fluid">
     <div class="layui-header" th:replace="header.html"></div>
-    <div class="layui-row layui-col-space30 head-row">
+    <div class="layui-row layui-col-space16" style="padding: 16px;margin: 0 !important;">
         <div class="layui-col-md4">
-            <div class="layui-row" style="background-color: #00C0EF;height: 100px">
-                <div class="layui-col-md5 head-left-row" style="background-color: #009ABF" th:text="${apps.appNum}">
+            <div class="console-body-head-row">
+                <div class="layui-col-md3" style="height: 100%;background-color: #009ABF">
+                    <i class="layui-icon layui-icon-template-1" style="color: white;font-size: 50px;padding: 28px;line-height: 100px"></i>
                 </div>
-                <div class="layui-col-md7 head-right-row">
-                    客户端数目
+                <div class="layui-col-md9" style="color: white;padding: 16px;height: 100%;background-color: #00C0EF">
+                    <div style="height: 40px;line-height: 40px;font-size: 16px;font-weight: bold" id="appNum" th:text="${apps.appNum}"></div>
+                    <div style="height: 1px;background-color: white"></div>
+                    <div style="line-height: 40px">
+                        <span>应用模块数</span>
+                    </div>
                 </div>
             </div>
         </div>
+
         <div class="layui-col-md4">
-            <div class="layui-row" style="background-color: #F39C12;height: 100px">
-                <div class="layui-col-md5 head-left-row" style="background-color: #C27D0E" th:text="${apps.nodeNum}">
+            <div class="console-body-head-row">
+                <div class="layui-col-md3" style="height: 100%;background-color: #C27D0E">
+                    <i class="layui-icon layui-icon-component" style="color: white;font-size: 50px;padding: 28px;line-height: 100px"></i>
                 </div>
-                <div class="layui-col-md7 head-right-row">
-                    历史节点数目
+                <div class="layui-col-md9" style="color: white;padding: 16px;height: 100%;background-color: #F39C12">
+                    <div style="height: 40px;line-height: 40px;font-size: 16px;font-weight: bold" id="nodeNum" th:text="${apps.nodeNum}"></div>
+                    <div style="height: 1px;background-color: white"></div>
+                    <div style="line-height: 40px">
+                        <span>实例数</span>
+                    </div>
                 </div>
             </div>
         </div>
+
         <div class="layui-col-md4">
-            <div class="layui-row" style="background-color: #5FB878;height: 100px">
-                <div class="layui-col-md5 head-left-row" style="background-color: #009f95" th:text="${apps.healthNodeNum}">
+            <div class="console-body-head-row">
+                <div class="layui-col-md3" style="height: 100%;background-color: #008548">
+                    <i class="layui-icon layui-icon-face-smile-fine" style="color: white;font-size: 50px;padding: 28px;line-height: 100px"></i>
                 </div>
-                <div class="layui-col-md7 head-right-row">
-                    当前健康节点数目
+                <div class="layui-col-md9" style="color: white;padding: 16px;height: 100%;background-color: #00A65A">
+                    <div style="height: 40px;line-height: 40px;font-size: 16px;font-weight: bold" id="healthNodeNum" th:text="${apps.healthNodeNum}"></div>
+                    <div style="height: 1px;background-color: white"></div>
+                    <div style="line-height: 40px">
+                        <span>健康实例数</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="layui-row" style="padding-left: 20px;padding-right: 20px">
+    <div class="layui-row" style="padding-left: 16px;padding-right: 16px">
         <table id="appdata" lay-filter="app">
             <script type="text/html" id="appInfoBar">
-                <a class="layui-btn layui-btn-xs" lay-event="lookNode">节点信息</a>
+                <a class="layui-btn layui-btn-xs layui-btn-xs layui-btn-primary layui-border-green" lay-event="lookNode">节点信息</a>
+                <a class="layui-btn layui-btn-xs layui-btn-primary layui-border-red" lay-event="delete">删除</a>
             </script>
         </table>
     </div>
+</div>
+
+<div style="display: none;padding: 16px;" class="layui-row" id="nodeModal">
+    <table id="appNodeData" lay-filter="appNode">
+        <script type="text/html" id="appNodeBar">
+            <a class="layui-btn layui-btn-xs layui-btn-primary layui-border-red" lay-event="delete">删除</a>
+        </script>
+    </table>
 </div>
 </body>
 
@@ -76,10 +102,10 @@
                 , dataName: 'data' //规定数据列表的字段名称，默认：data
             }
             , cols: [[
-                {field: 'appName', title: '客户端标识', width: 400}
-                , {field: 'nodeNum', title: '历史节点数目', minWidth: 100}
-                , {field: 'healthNodeNum', title: '当前健康节点数目', width: 300}
-                , {title: '操作', toolbar: '#appInfoBar',fixed: 'right',width: 250}
+                {field: 'appName', title: '应用模块', width: 510}
+                , {field: 'nodeNum', title: '实例数', width: 500}
+                , {field: 'healthNodeNum', title: '健康实例数', width: 200}
+                , {title: '操作', toolbar: '#appInfoBar',fixed: 'right'}
             ]]
         });
 
@@ -88,15 +114,118 @@
             if (obj.event === 'lookNode') {
                 //编辑用户
                 layer.open({
-                    type: 2,
-                    content: "/node?appName=" + obj.data.appName,
+                    type: 1,
+                    content: $('#nodeModal'),
                     area: ["70%", "70%"],
                     title: ['节点信息'],
                     fixed: false,
-                    shadeClose: true
+                    shadeClose: true,
+                    success: function (layer,index) {
+                        loadNodeTable(obj.data.appName);
+                    }
+                })
+            }
+            if (obj.event === 'delete') {
+                layer.confirm('确定删除？', function (index) {
+                    if (obj.data.healthNodeNum > 0) {
+                        layer.msg("存在健康节点，无法删除",{icon: 5});
+                    } else {
+                        $.ajax({
+                            url: '/appInfo/delete/' + obj.data.id,
+                            method: 'delete',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'JSON',
+                            success: function (res) {
+                                if (res.code===200) {
+                                    obj.del();
+                                    reloadApps();
+                                } else {
+                                    layer.msg(res.message, {icon: 5});
+                                }
+                            }
+                        });
+                    }
+                    layer.close(index);
                 })
             }
         });
+
+        //触发节点单击事件
+        table.on('tool(appNode)', function (obj) {
+            if (obj.event === 'delete') {
+                layer.confirm('确定删除？', function (index) {
+                    if (obj.data.online===1) {
+                        layer.msg("该节点在线，无法删除",{icon: 5});
+                    } else {
+                        $.ajax({
+                            url: '/appNode/delete/' + obj.data.id,
+                            method: 'delete',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'JSON',
+                            success: function (res) {
+                                if (res.code===200) {
+                                    obj.del();
+                                    initTable.reload();
+                                    reloadApps();
+                                } else {
+                                    layer.msg(res.message, {icon: 5});
+                                }
+                            }
+                        });
+                    }
+                    layer.close(index);
+                })
+            }
+        });
+
+        function reloadApps() {
+            $.ajax({
+                url: '/appInfo/apps',
+                method: 'get',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'JSON',
+                success: function (res) {
+                    if (res.code===200) {
+                        console.log(res.data)
+                        $('#appNum').text(res.data.appNum);
+                        $('#nodeNum').text(res.data.nodeNum);
+                        $('#healthNodeNum').text(res.data.healthNodeNum);
+                    }
+                }
+            });
+        }
+
+        function loadNodeTable(appName) {
+            table.render({
+                elem: '#appNodeData'
+                , url: '/appNode/list' //数据接口
+                , method: 'get'
+                , where: {
+                    appName: appName
+                }
+                , response: {
+                    statusName: 'code' //规定数据状态的字段名称，默认：code
+                    , statusCode: 200 //规定成功的状态码，默认：0
+                    , msgName: 'message' //规定状态信息的字段名称，默认：msg
+                    , countName: 'count' //规定数据总数的字段名称，默认：count
+                    , dataName: 'data' //规定数据列表的字段名称，默认：data
+                }
+                , cols: [[
+                    {field: 'appName', title: '应用模块', width: 249}
+                    , {field: 'ip', title: 'IP', width: 180}
+                    , {field: 'port', title: '端口', width: 120}
+                    , {field: 'online', title: '状态', width: 150, templet: function (data) {
+                            if (data.online === 0) {
+                                return '<span style="color:red">离&ensp;线</span>';
+                            } else {
+                                return '<span style="color: #5FB878">在&ensp;线</span>';
+                            }
+                        }}
+                    , {field: 'heartbeatTime', title: '最后心跳时间', width: 180}
+                    , {title: '操作', toolbar: '#appNodeBar',fixed: 'right'}
+                ]]
+            });
+        }
 
         // 校验
         form.verify({
@@ -209,7 +338,6 @@
 
         //添加用户点击事件
         $('#addUserBoxBtn').on('click',function (data){
-            console.log(1111111)
             //添加用户
             layer.open({
                 type: 1,

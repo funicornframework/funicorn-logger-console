@@ -59,6 +59,13 @@ public class RouterController {
                     .le(SysLog::getOperationTime,DateTimeUtil.getDayEndTime(new Date())));
             homeDataVO.setLogNum(logCount);
             homeDataVO.setUserNum(sysLogService.countOptUserToday());
+            int healthNodeNum = 0;
+            int nodeNum = 0;
+            for (AppInfoVO appInfoVO : result) {
+                healthNodeNum += appInfoVO.getHealthNodeNum();
+                nodeNum += appInfoVO.getNodeNum();
+            }
+            homeDataVO.setNodeDesc(healthNodeNum + " / " + nodeNum);
         }
         model.addAttribute("homeData",homeDataVO);
         return "home";
@@ -89,23 +96,6 @@ public class RouterController {
         apps.setHealthNodeNum(healthNodeNum);
         model.addAttribute("apps",apps);
         return "app";
-    }
-
-    @GetMapping("/node")
-    public String toNode(@RequestParam String appName, Model model){
-        model.addAttribute("appName",appName);
-        List<AppInfoVO> result = appInfoService.listAppsByUsername();
-        List<AppNode> nodes = new ArrayList<>();
-        if (result!=null && !result.isEmpty()) {
-            for (AppInfoVO appInfoVO : result) {
-                if (appInfoVO.getAppName().equals(appName)) {
-                    nodes = appInfoVO.getNodes();
-                    break;
-                }
-            }
-        }
-        model.addAttribute("nodes",nodes);
-        return "node";
     }
 
     @GetMapping("/logout")

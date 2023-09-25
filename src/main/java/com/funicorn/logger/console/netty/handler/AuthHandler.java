@@ -32,8 +32,6 @@ public class AuthHandler extends AbstractCommandHandler {
 
     @Resource
     private IUserInfoService userInfoService;
-    @Resource
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public void execute(ChannelHandlerContext ctx, MessageExt messageExt) throws Exception {
@@ -42,23 +40,24 @@ public class AuthHandler extends AbstractCommandHandler {
             return;
         }
         AuthModel authModel = (AuthModel) messageExt.getData();
-        if (authModel==null || StringUtils.isBlank(authModel.getUsername()) || StringUtils.isBlank(authModel.getPassword())) {
+        if (authModel==null || StringUtils.isBlank(authModel.getClientSecret())) {
             authFailed(ctx);
             return;
         }
-        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUsername,authModel.getUsername()));
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getClientSecret,authModel.getClientSecret()));
         if (userInfo==null) {
             authFailed(ctx);
             return;
         }
-        if(!passwordEncoder.matches(authModel.getPassword(),userInfo.getPassword())) {
+        if(!authModel.getClientSecret().equals(userInfo.getClientSecret())) {
             authFailed(ctx);
             return;
         }
 
         // 通过后，移除掉this
         ctx.pipeline().remove(AuthHandler.class);
-        NettyFactory.getInstance().getChannel(ctx.channel().id()).setAuthToken(((AuthModel) messageExt.getData()).getUsername());
+        NettyFactory.getInstance().getChannel(ctx.channel().id()).setAuthToken(((AuthModel) messageExt.getData()).getClientSecret());
+        NettyFactory.getInstance().getChannel(ctx.channel().id()).setTargetAddr(NettyFactory.getInstance().getChannel(ctx.channel().id()).getTargetAddr() + ":" + authModel.getPort());
         authSuccess(ctx);
     }
 

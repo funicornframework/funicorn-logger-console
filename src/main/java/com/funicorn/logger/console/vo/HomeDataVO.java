@@ -7,6 +7,11 @@ package com.funicorn.logger.console.vo;
 public class HomeDataVO {
 
     /**
+     * 首页节点情况
+     * */
+    private String nodeDesc = "0 / 0";
+
+    /**
      * 应用
      */
     private Integer appNum = 0;
@@ -20,6 +25,14 @@ public class HomeDataVO {
      * 用户
      */
     private Long userNum = 0L;
+
+    public String getNodeDesc() {
+        return nodeDesc;
+    }
+
+    public void setNodeDesc(String nodeDesc) {
+        this.nodeDesc = nodeDesc;
+    }
 
     public Integer getAppNum() {
         return appNum;

@@ -3,6 +3,7 @@ package com.funicorn.logger.console.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  * @since 2023-03-03
  */
 @TableName("user_info")
-public class UserInfo {
+public class UserInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,6 +39,11 @@ public class UserInfo {
      * 密码
      */
     private String password;
+
+    /**
+     * 客户端密钥
+     * */
+    private String clientSecret;
 
     /**
      * 用户类型
@@ -65,6 +71,14 @@ public class UserInfo {
     @TableLogic(value = "0",delval = "1")
     @TableField(value = "deleted", fill = FieldFill.INSERT)
     private String deleted;
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
 
     public String getUsername() {
         return username;

@@ -2,7 +2,12 @@ package com.funicorn.logger.console.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.funicorn.logger.console.entity.SysLog;
+import com.funicorn.logger.console.model.CountLogModel;
+import com.funicorn.logger.console.model.CountLogReturnModel;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +20,10 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SysLogMapper extends BaseMapper<SysLog> {
 
+    /**
+     * 统计
+     * @param countLogModel countByRangeTimeModel
+     * @return {@link List}<{@link CountLogReturnModel}>
+     */
+    List<CountLogReturnModel> queryCountByRangeTime(@Param("countLogModel") CountLogModel countLogModel);
 }

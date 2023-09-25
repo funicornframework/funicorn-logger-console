@@ -5,13 +5,14 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.funicorn.framework.common.base.json.JsonUtil;
 import com.funicorn.framework.common.netty.core.ChannelEx;
+import com.funicorn.logger.console.constant.LoggerConstants;
 import com.funicorn.logger.console.constant.UserType;
 import com.funicorn.logger.console.entity.AppInfo;
 import com.funicorn.logger.console.entity.AppNode;
 import com.funicorn.logger.console.entity.UserApp;
 import com.funicorn.logger.console.mapper.AppInfoMapper;
-import com.funicorn.logger.console.mapper.AppNodeMapper;
 import com.funicorn.logger.console.service.IAppInfoService;
+import com.funicorn.logger.console.service.IAppNodeService;
 import com.funicorn.logger.console.service.IUserAppService;
 import com.funicorn.logger.console.util.ContextUtil;
 import com.funicorn.logger.console.vo.AppInfoVO;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,47 +38,33 @@ import java.util.stream.Collectors;
 public class AppInfoServiceImpl extends ServiceImpl<AppInfoMapper, AppInfo> implements IAppInfoService {
 
     @Resource
-    private AppNodeMapper appNodeMapper;
+    private IAppNodeService appNodeService;
     @Resource
     private IUserAppService userAppService;
 
     @Override
     public void heartBeat(ChannelEx channelEx) {
-        AppInfo appInfo = getOne(Wrappers.<AppInfo>lambdaQuery().eq(AppInfo::getAppName,channelEx.getClientId()).last("limit 1"));
+        AppInfo appInfo = baseMapper.queryAppInfoByClientId(channelEx.getClientId());
         if (appInfo==null) {
-            //新增客户端
-            AppInfo strangeAppInfo = new AppInfo();
-            strangeAppInfo.setAppName(channelEx.getClientId());
-            save(strangeAppInfo);
-
-            //新增节点
-            AppNode strangeAppNode = new AppNode();
-            strangeAppNode.setAppName(channelEx.getClientId());
-            strangeAppNode.setHeartbeatTime(LocalDateTime.now());
-            strangeAppNode.setOnline(1);
-            strangeAppNode.setIp(channelEx.getTargetAddr());
-            appNodeMapper.insert(strangeAppNode);
+            synchronized (this) {
+                appInfo = baseMapper.queryAppInfoByClientId(channelEx.getClientId());
+                if (appInfo==null) {
+                    //新增客户端
+                    AppInfo strangeAppInfo = new AppInfo();
+                    strangeAppInfo.setAppName(channelEx.getClientId());
+                    save(strangeAppInfo);
+                }
+            }
         } else {
-            AppNode appNode = appNodeMapper.selectOne(Wrappers.<AppNode>lambdaQuery()
-                    .eq(AppNode::getAppName,channelEx.getClientId())
-                    .eq(AppNode::getIp,channelEx.getTargetAddr()).last("limit 1"));
-            if (appNode==null) {
-                //新增节点
-                AppNode strangeAppNode = new AppNode();
-                strangeAppNode.setAppName(channelEx.getClientId());
-                strangeAppNode.setHeartbeatTime(LocalDateTime.now());
-                strangeAppNode.setOnline(1);
-                strangeAppNode.setIp(channelEx.getTargetAddr());
-                appNodeMapper.insert(strangeAppNode);
-            } else {
-                LambdaUpdateWrapper<AppNode> updateWrapper = new LambdaUpdateWrapper<>();
-                updateWrapper.eq(AppNode::getAppName,channelEx.getClientId());
-                updateWrapper.eq(AppNode::getIp,channelEx.getTargetAddr());
-                updateWrapper.set(AppNode::getHeartbeatTime,LocalDateTime.now());
-                updateWrapper.set(AppNode::getOnline,1);
-                appNodeMapper.update(null,updateWrapper);
+            if (LoggerConstants.DELETED.equals(appInfo.getDeleted())) {
+                baseMapper.updateAppInfoNotDeleted(appInfo.getId());
             }
         }
+        int port = 80;
+        if (channelEx.getTargetAddr().split(":").length>0) {
+            port = Integer.parseInt(channelEx.getTargetAddr().split(":")[1]);
+        }
+        appNodeService.saveOrUpdateAppNode(channelEx.getClientId(),channelEx.getTargetAddr().split(":")[0],port);
         userAppService.checkAndBindUserApp(channelEx.getAuthToken(),channelEx.getClientId());
     }
 
@@ -101,7 +87,7 @@ public class AppInfoServiceImpl extends ServiceImpl<AppInfoMapper, AppInfo> impl
         }
         List<String> apps = appInfos.stream().map(AppInfo::getAppName).collect(Collectors.toList());
         List<AppInfoVO> appInfoVOList = new ArrayList<>();
-        List<AppNode> appNodes = appNodeMapper.selectList(Wrappers.<AppNode>lambdaQuery().in(AppNode::getAppName,apps));
+        List<AppNode> appNodes = appNodeService.list(Wrappers.<AppNode>lambdaQuery().in(AppNode::getAppName,apps));
         Map<String, List<AppNode>> nodeMap = appNodes.stream().collect(Collectors.groupingBy(AppNode::getAppName));
         for (AppInfo appInfo : appInfos) {
             AppInfoVO appInfoVO = JsonUtil.object2Object(appInfo,AppInfoVO.class);
