@@ -81,12 +81,7 @@ public class AuthHandler extends AbstractCommandHandler {
         messageExt.setCommand(NettyCommandEnum.AUTH_COMMAND.getCode());
         messageExt.setData(new AuthResponse());
         ctx.channel().writeAndFlush(messageExt);
-        logger.warn("[{}] auth failed, the connection will be closed after 10 seconds.",NettyFactory.getInstance().getChannel(ctx.channel().id()).getTargetAddr());
-        ctx.channel().eventLoop().schedule(new Runnable() {
-            @Override
-            public void run() {
-                ctx.channel().close();
-            }
-        },10, TimeUnit.SECONDS);
+        logger.warn("[{}] auth failed, the connection will be closed.",NettyFactory.getInstance().getChannel(ctx.channel().id()).getTargetAddr());
+        ctx.channel().close();
     }
 }

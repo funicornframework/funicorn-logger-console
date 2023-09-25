@@ -61,7 +61,7 @@ public class AppInfoServiceImpl extends ServiceImpl<AppInfoMapper, AppInfo> impl
             }
         }
         int port = 80;
-        if (channelEx.getTargetAddr().split(":").length>0) {
+        if (channelEx.getTargetAddr().split(":").length>1) {
             port = Integer.parseInt(channelEx.getTargetAddr().split(":")[1]);
         }
         appNodeService.saveOrUpdateAppNode(channelEx.getClientId(),channelEx.getTargetAddr().split(":")[0],port);
