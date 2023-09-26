@@ -14,11 +14,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Aimee
@@ -54,7 +52,7 @@ public class AuthHandler extends AbstractCommandHandler {
             return;
         }
 
-        // 通过后，移除掉this
+        // 认证通过后，移除掉认证处理器
         ctx.pipeline().remove(AuthHandler.class);
         NettyFactory.getInstance().getChannel(ctx.channel().id()).setAuthToken(((AuthModel) messageExt.getData()).getClientSecret());
         NettyFactory.getInstance().getChannel(ctx.channel().id()).setTargetAddr(NettyFactory.getInstance().getChannel(ctx.channel().id()).getTargetAddr() + ":" + authModel.getPort());

@@ -208,6 +208,7 @@
          * */
         function loadCountByRangeTimeChart() {
             const countByRangeTimeChart = echarts.init(document.getElementById('countByRangeTimeChart'));
+            countByRangeTimeChart.clear();
             let title = '日志分布图';
             if (countByRangeTimeParam.rangeType===0) {
                 title = '（今日）' + title;
@@ -224,15 +225,9 @@
                     left: 'center'
                 },
                 tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'cross',
-                        label: {
-                            backgroundColor: '#6a7985'
-                        }
-                    }
+                    trigger: 'axis'
                 },
-                legend: {show: false,data: []},
+                legend: {show:false},
                 grid: {
                     left: '3%',
                     right: '4%',
@@ -253,6 +248,7 @@
                 ],
                 series: []
             }
+            countByRangeTimeChart.showLoading();
             $.ajax({
                 url:'/sysLog/countByRangeTime',
                 method:'get',
@@ -260,11 +256,13 @@
                 success: function (data) {
                     if (data.code===200 && data.data) {
                         if (data.data) {
-                            countByRangeTimeChartOptions.legend.data = data.data.appNames;
                             countByRangeTimeChartOptions.xAxis[0].data = data.data.times;
                             data.data.appNames.forEach(appName=>{
                                 let yData = {
-                                    name: appName,type: 'line', stack: 'Total', emphasis: {focus: 'series'},data:[]
+                                    name: appName,type: 'line',markPoint: {data: [
+                                            { type: 'max', name: 'Max' },
+                                        ]
+                                    },data:[]
                                 }
                                 data.data.counts[appName].forEach(count=>{
                                     yData.data.push(count.sum);
@@ -272,8 +270,13 @@
                                 countByRangeTimeChartOptions.series.push(yData);
                             });
                         }
+                        countByRangeTimeChart.hideLoading();
+                        console.log(JSON.stringify(countByRangeTimeChartOptions));
                         countByRangeTimeChart.setOption(countByRangeTimeChartOptions);
                     }
+                },
+                error: function() {
+                    countByRangeTimeChart.hideLoading();
                 }
             });
         }
@@ -338,6 +341,7 @@
         //加载
         function loadOperateTypeChart() {
             const pieChart = echarts.init(document.getElementById('pieLogType'));
+            pieChart.clear();
             let title = '日志类型比例图';
             if (countByOperateTypeParam.rangeType===0) {
                 title = '（今日）' + title;
@@ -376,7 +380,7 @@
                     }
                 ]
             };
-
+            pieChart.showLoading();
             $.ajax({
                 url:'/sysLog/groupByOperateType',
                 method:'get',
@@ -391,6 +395,10 @@
                         pieOption.series[0].data = seriesData;
                         pieChart.setOption(pieOption);
                     }
+                    pieChart.hideLoading();
+                },
+                error: function() {
+                    pieChart.hideLoading();
                 }
             });
         }

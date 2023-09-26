@@ -94,10 +94,11 @@ funicorn:
 http://139.9.72.138:9900/login  admin/123456  
 ````
 #####！！！真实数据，请勿修改任何数据！！！ 谢谢配合
-![img.png](introduce/img.png)  
-![img_2.png](introduce/img_2.png)  
-![img_3.png](introduce/img_3.png)
+![img_5.png](introduce/img_5.png)
+![img_6.png](introduce/img_6.png)  
+![img.png](introduce/img.png)
+![img_1.png](introduce/img_1.png)
+![img_2.png](introduce/img_2.png)
 
 ###作者联系方式
-有疑问可联系作者，微信号：Funicorn_cloud  
-![img_4.png](introduce/img_4.png)
+有疑问可联系作者，微信号：Funicorn_cloud
