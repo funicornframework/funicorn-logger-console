@@ -3,7 +3,7 @@ server:
 # 应用名称
 spring:
   application:
-    name: funicorn-log-console
+    name: funicorn-logger-console
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,7 +21,7 @@ spring:
     encoding: utf-8
     servlet:
       content-type: text/html
-    cache: false
+    cache: true
 
 # 客户端连接端口
 funicorn:
