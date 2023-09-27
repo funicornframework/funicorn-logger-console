@@ -15,13 +15,12 @@ client即为产生日志的各个系统，server端即为我们现在部署的�
 #### 下载编译包，解压并部署
 ````
 1、解压   
-     windows：用解压软件  
-     linux：tar -zxvf xxxx  
-2、创建数据库，执行conf目录下funicorn_logger.sql文件  
-3、修改config目录下的application.yml配置文件  
-4、部署  
-     windows：执行win-start.bat   
-     linux：./start.sh
+2、创建数据库，再执行conf目录下funicorn_logger.sql文件  
+3、修改conf目录下的application.yml配置文件  
+4、启动
+   将conf执行脚本放在funicorn-logger-console.jar 同目录下 
+   windows：win-start.bat   
+   linux：./start.sh
 ````
 ### 控制台访问地址
 ````
