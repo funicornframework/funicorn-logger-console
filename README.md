@@ -41,7 +41,7 @@ funicorn:
 <dependency>
    <groupId>io.github.funicornframework</groupId>
    <artifactId>funicorn-logger-core</artifactId>
-   <version>1.2.0</version>
+   <version>1.2.1</version>
 </dependency>
 ````
 #### 2、创建上下文拦截器
