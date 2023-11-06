@@ -1,4 +1,37 @@
-# funicorn-logger-console
+<h1 align="center" style="text-align:center;">
+  funicorn-logger-console
+</h1>
+<p align="center">
+	<strong>一站式用户操作日志收集平台</strong>
+</p>
+
+<p align="center">
+    <a target="_blank" href="https://search.maven.org/artifact/org.noear/socketd">
+        <img src="https://img.shields.io/maven-central/v/org.noear/socketd.svg?label=Maven%20Central" alt="Maven" />
+    </a>
+    <a target="_blank" href="https://www.apache.org/licenses/LICENSE-2.0.txt">
+		<img src="https://img.shields.io/:license-Apache2-blue.svg" alt="Apache 2" />
+	</a>
+   <a target="_blank" href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html">
+		<img src="https://img.shields.io/badge/JDK-8-green.svg" alt="jdk-8" />
+	</a>
+    <br />
+    <a target="_blank" href='https://gitee.com/noear/socketd/stargazers'>
+        <img src='https://gitee.com/liu_hao3/funicorn-logger-console/badge/star.svg' alt='gitee star'/>
+    </a>
+    <a target="_blank" href='https://github.com/noear/socketd/stargazers'>
+        <img src="https://img.shields.io/github/stars/funicornframework/funicorn-logger-console.svg?logo=github" alt="github star"/>
+    </a>
+</p>
+
+<br/>
+<p align="center">
+	<a href="https://jq.qq.com/?_wv=1027&k=kjB5JNiC">
+	<img src="https://img.shields.io/badge/QQ-407770627-orange"/></a>
+</p>
+
+
+<hr />
 ##页面操作日志管理平台
 通过注解的方式，记录用户操作日志；很多企业会自己搭建一个日记记录系统，原理一样，
 都是通过切面的方式拦截注解方法；额外引入了client-server模式，
